@@ -12,7 +12,7 @@ Teacup::Stylesheet.new(:signup_sheet) do
     },
     constraints: [
       constrain_width(ControlWidth),
-      constrain_height(FieldHeight * 3),
+      constrain_height(FieldHeight * 4),
       constrain_above(:signup_button, 15),
       constrain(:center_x).equals(:superview, :center_x),
     ]
@@ -31,6 +31,15 @@ Teacup::Stylesheet.new(:signup_sheet) do
     constraints: [
       constrain_height(1),
       constrain(:width).equals(:signup_box, :width),
+      constrain(:top).equals(:signup_box, :top).plus(100),
+      constrain(:center_x).equals(:signup_box, :center_x),
+    ]
+
+  style :separator3,
+    background: 0xd6d6d6,
+    constraints: [
+      constrain_height(1),
+      constrain(:width).equals(:signup_box, :width),
       constrain(:bottom).equals(:signup_box, :bottom).minus(50),
       constrain(:center_x).equals(:signup_box, :center_x),
     ]
@@ -41,12 +50,11 @@ Teacup::Stylesheet.new(:signup_sheet) do
       borderStyle: UITextBorderStyleNone,
       contentVerticalAlignment: UIControlContentVerticalAlignmentCenter
 
-  style :email_field, extends: :signup_field,
-    placeholder: 'Email',
+  style :name_field, extends: :signup_field,
+    placeholder: 'Full Name',
     returnKeyType: UIReturnKeyNext,
-    keyboardType: UIKeyboardTypeEmailAddress,
     autocorrectionType: UITextAutocorrectionTypeNo,
-    autocapitalizationType: UITextAutocapitalizationTypeNone,
+    autocapitalizationType: UITextAutocapitalizationTypeWords,
     constraints: [
       constrain_height(FieldHeight),
       constrain(:top).equals(:signup_box, :top),
@@ -54,9 +62,22 @@ Teacup::Stylesheet.new(:signup_sheet) do
       constrain(:width).equals(:signup_box, :width).minus(20),
     ]
 
+  style :email_field, extends: :signup_field,
+    placeholder: 'Email',
+    returnKeyType: UIReturnKeyNext,
+    keyboardType: UIKeyboardTypeEmailAddress,
+    autocorrectionType: UITextAutocorrectionTypeNo,
+    autocapitalizationType: UITextAutocapitalizationTypeNone,
+    constraints: [
+      constrain_below(:name_field),
+      constrain_height(FieldHeight),
+      constrain(:center_x).equals(:signup_box, :center_x),
+      constrain(:width).equals(:signup_box, :width).minus(20),
+    ]
+
   style :password_field, extends: :signup_field,
       placeholder: 'Password',
-      returnKeyType: UIReturnKeyGo,
+      returnKeyType: UIReturnKeyNext,
       constraints: [
         constrain_height(50),
         constrain_below(:email_field),
@@ -84,7 +105,7 @@ Teacup::Stylesheet.new(:signup_sheet) do
       constrain_width(ControlWidth),
       constrain_height(ButtonHeight),
       constrain(:center_x).equals(:superview, :center_x),
-      constrain(:bottom).equals(:superview, :bottom).minus(KeyboardHeight + 30),
+      constrain_above(:login_button, 120),
     ]
 
   style :login_button, extends: :button,

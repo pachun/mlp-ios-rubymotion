@@ -7,6 +7,8 @@ class SignupScreen < ProMotion::Screen
     subview(UIView, :signup_box)
     subview(UIView, :separator1)
     subview(UIView, :separator2)
+    subview(UIView, :separator3)
+    @name_field = subview(UITextField, :name_field)
     @email_field = subview(UITextField, :email_field)
     @password_field = subview(UITextField, :password_field)
     @confirm_password_field = subview(UITextField, :confirm_password_field)

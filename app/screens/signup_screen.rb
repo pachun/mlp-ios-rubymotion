@@ -1,7 +1,7 @@
 class SignupScreen < ProMotion::Screen
 
   # fields
-  attr_accessor :email_field, :password_field, :confirm_password_field
+  attr_accessor :name_field, :email_field, :password_field, :confirm_password_field
   # buttons
   attr_accessor :signup_button, :login_button
 
@@ -12,6 +12,7 @@ class SignupScreen < ProMotion::Screen
 
   # wire up tap events & keyboard forwarding
   def did_load
+    @name_field.when(DoneWithKeyboard) { @email_field.becomeFirstResponder }
     @email_field.when(DoneWithKeyboard) { @password_field.becomeFirstResponder }
     @password_field.when(DoneWithKeyboard) { @confirm_password_field.becomeFirstResponder }
     @confirm_password_field.when(DoneWithKeyboard) { drop_keyboard }
@@ -21,6 +22,7 @@ class SignupScreen < ProMotion::Screen
   end
 
   def drop_keyboard
+    @name_field.resignFirstResponder
     @email_field.resignFirstResponder
     @password_field.resignFirstResponder
     @confirm_password_field.resignFirstResponder
