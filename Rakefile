@@ -11,4 +11,9 @@ Motion::Project::App.setup do |app|
   app.device_family = [:iphone, :ipad]
 
   app.fonts = ['Satisfy.ttf']
+
+  app.pods do
+    pod 'SVProgressHUD'
+    pod 'Reachability'
+  end
 end

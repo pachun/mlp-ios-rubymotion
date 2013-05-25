@@ -14,6 +14,8 @@ class LoginScreen < ProMotion::Screen
     view.when_tapped { drop_keyboard }
   end
 
+  private
+
   def drop_keyboard
     @email_field.resignFirstResponder
     @password_field.resignFirstResponder
