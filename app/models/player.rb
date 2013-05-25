@@ -1,20 +1,50 @@
 class Player
-  attr_accessor :name, :email, :password, :api_key, :registered_at,
+  attr_accessor :id, :name, :email, :password, :api_key, :registered_at,
     :confirmed_password, :error, :saved
 
   # UI entry points
   def signup(&block)
     @saved = false
-    if valid_signup_credentials
+    if valid_signup_credentials?
       send_signup_request(&block)
     else
       block.call
     end
   end
 
+  def login(&block)
+    if valid_login_credentials?
+      send_login_request(&block)
+    else
+      block.call
+    end
+  end
+
+  # shortcuts
+  def logged_in?
+    @api_key.class == String && @api_key.length == 32
+  end
+
   private
 
   # requests
+  def send_login_request(&block)
+    data = {:player => {:email => @email,
+                        :password => @password,
+    }}
+    BW::HTTP.post(BaseURL + '/login', {:payload => data}) do |response|
+      if response.ok?
+        json = BW::JSON.parse(response.body.to_str)
+        @id = json['id']
+        @name = json['name']
+        @api_key = json['api_key']
+      else
+        @error = 'Bad credentials'
+      end
+      block.call
+    end
+  end
+
   def send_signup_request(&block)
     data = {:player => {:full_name => @name,
                         :email => @email,
@@ -32,7 +62,15 @@ class Player
   end
 
   # validations
-  def valid_signup_credentials
+  def valid_login_credentials?
+    if valid_email && valid_password
+      true
+    else
+      false
+    end
+  end
+
+  def valid_signup_credentials?
     if valid_name && valid_email && valid_password && password_confirmed
       true
     else
@@ -63,6 +101,7 @@ class Player
       true
     else
       @error = 'Passwords are at least 4 long'
+      false
     end
   end
 

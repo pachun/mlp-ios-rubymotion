@@ -4,8 +4,8 @@ class SignupScreen < ProMotion::Screen
   attr_accessor :name_field, :email_field, :password_field, :confirm_password_field
   # buttons
   attr_accessor :signup_button, :login_button
-  # persistence
-  attr_accessor :player
+
+  attr_accessor :player, :login_screen
 
   # setup transition style when the view is constructed
   def on_load
@@ -32,18 +32,19 @@ class SignupScreen < ProMotion::Screen
     @confirm_password_field.resignFirstResponder
   end
 
+  def enable_signup_button
+    @signup_button.when_tapped do
+      disable_signup_button
+      drop_keyboard
+      signup
+    end
+  end
+
   def disable_signup_button
     @signup_button.when_tapped {}
   end
 
-  def enable_signup_button
-    @signup_button.when_tapped { signup }
-  end
-
   def signup
-    drop_keyboard
-    disable_signup_button
-
     @player = Player.new
     @player.name = @name_field.text
     @player.email = @email_field.text
@@ -52,11 +53,17 @@ class SignupScreen < ProMotion::Screen
     @player.signup do
       if @player.saved
         SVProgressHUD.showSuccessWithStatus('Player Created!')
-        # dismissViewControllerAnimated(true, completion:nil)
+        animate_to_login
       else
         SVProgressHUD.showErrorWithStatus(@player.error)
         enable_signup_button
       end
     end
+  end
+
+  def animate_to_login
+    @login_screen.email_field.text = @player.email
+    @login_screen.password_field.text = @player.password
+    dismissViewControllerAnimated(true, completion:nil)
   end
 end

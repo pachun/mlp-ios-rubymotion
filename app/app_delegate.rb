@@ -17,6 +17,6 @@ BaseURL = 'http://localhost'
 # App's entry point
 class AppDelegate < ProMotion::Delegate
   def on_load(app, options)
-    open LoginScreen.new
+    open LoginScreen
   end
 end
