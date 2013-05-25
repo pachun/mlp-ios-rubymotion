@@ -20,3 +20,12 @@ class AppDelegate < ProMotion::Delegate
     open LoginScreen
   end
 end
+
+# style default UI components
+Teacup::Appearance.new do
+  style UINavigationBar,
+    tintColor: 0x0088cc.uicolor
+
+  style UIBarButtonItem, when_contained_in: UINavigationBar,
+    tintColor: 0x0088cc.uicolor
+end

@@ -1,6 +1,8 @@
 Teacup::Stylesheet.new(:login_sheet) do
+  import :mlp
+
   style :root,
-    background: 0xf7f7f7,
+    background: BackgroundColor,
     accessibilityLabel: 'Login Screen'
 
   style :pong_man,
@@ -16,13 +18,7 @@ Teacup::Stylesheet.new(:login_sheet) do
       constrain(:left).equals(:login_box, :left),
     ]
 
-  style :login_box,
-    background: :white.uicolor,
-    layer: {
-      cornerRadius: 2,
-      borderWidth: 1,
-      borderColor: 0xd6d6d6.uicolor.CGColor,
-    },
+  style :login_box, extends: :field_box,
     constraints: [
       constrain_width(ControlWidth),
       constrain_height(FieldHeight * 2),
@@ -30,8 +26,7 @@ Teacup::Stylesheet.new(:login_sheet) do
       constrain(:center_x).equals(:superview, :center_x),
     ]
 
-  style :separator,
-    background: 0xd6d6d6,
+  style :separator, extends: :field_separator,
     constraints: [
       constrain_height(1),
       constrain(:width).equals(:login_box, :width),
@@ -39,18 +34,8 @@ Teacup::Stylesheet.new(:login_sheet) do
       constrain(:center_y).equals(:login_box, :center_y),
     ]
 
-  style :login_field,
-      backgroundColor: :clear.uicolor,
-      font: 'HelveticaNeue'.uifont(20),
-      borderStyle: UITextBorderStyleNone,
-      contentVerticalAlignment: UIControlContentVerticalAlignmentCenter
-
-  style :email_field, extends: :login_field,
+  style :email_field, extends: :field_email,
     placeholder: 'Email',
-    returnKeyType: UIReturnKeyNext,
-    keyboardType: UIKeyboardTypeEmailAddress,
-    autocorrectionType: UITextAutocorrectionTypeNo,
-    autocapitalizationType: UITextAutocapitalizationTypeNone,
     constraints: [
       constrain_height(FieldHeight),
       constrain(:top).equals(:login_box, :top),
@@ -58,7 +43,7 @@ Teacup::Stylesheet.new(:login_sheet) do
       constrain(:width).equals(:login_box, :width).minus(20),
     ]
 
-  style :password_field, extends: :login_field,
+  style :password_field, extends: :field,
       placeholder: 'Password',
       returnKeyType: UIReturnKeyGo,
       constraints: [
@@ -68,12 +53,7 @@ Teacup::Stylesheet.new(:login_sheet) do
         constrain(:width).equals(:login_box, :width).minus(20),
       ]
 
-  style :button,
-    font: 'HelveticaNeue-Bold'.uifont(18),
-    layer: { cornerRadius: 2 }
-
-  style :login_button, extends: :button,
-    background: 0xe5603c,
+  style :login_button, extends: :red_button,
     constraints: [
       constrain_width(ControlWidth),
       constrain_height(ButtonHeight),
@@ -81,8 +61,7 @@ Teacup::Stylesheet.new(:login_sheet) do
       constrain(:bottom).equals(:superview, :bottom).minus(KeyboardHeight + 30),
     ]
 
-  style :signup_button, extends: :button,
-    background: 0x12619A,
+  style :signup_button, extends: :blue_button,
     constraints: [
       constrain_width(ControlWidth),
       constrain_height(ButtonHeight),

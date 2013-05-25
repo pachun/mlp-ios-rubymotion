@@ -1,4 +1,6 @@
 class LeaguesScreen < ProMotion::SectionedTableScreen
+  attr_accessor :player
+
   title 'Welcome'
 
   def on_load
