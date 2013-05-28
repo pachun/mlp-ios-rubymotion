@@ -21,5 +21,9 @@ class LeaguesScreen < ProMotion::SectionedTableScreen
   end
 
   def create_league
+    create_league_screen = CreateLeagueScreen.new
+    create_league_screen.player = @player
+    create_league_screen.leagues_screen = self
+    open create_league_screen
   end
 end

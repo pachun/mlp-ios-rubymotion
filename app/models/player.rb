@@ -82,7 +82,7 @@ class Player
     if @name.class == String && @name.length >= 5 && @name.length <= 50
       true
     else
-      @error = 'Names are [5,50] long'
+      @error = 'Names are 5-50 long'
       false
     end
   end
@@ -91,7 +91,7 @@ class Player
     if @email.class == String && ((@email =~ /\A.+@.+\.(com|org|net|ca|us|co\.uk)\z/) == 0) && @email.length >= 6 && @email.length <= 75
       true
     else
-      @error = 'Valid emails are [6,75] long'
+      @error = 'Valid emails are 6-75 long'
       false
     end
   end
