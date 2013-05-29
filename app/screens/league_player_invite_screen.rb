@@ -1,68 +1,20 @@
-class LeaguePlayerInviteScreen < ProMotion::TableScreen
-  attr_accessor :league, :table_data, :leagues_screen
+class LeaguePlayerInviteScreen < ProMotion::Screen
+  attr_accessor :league, :accept_button, :decline_button
 
-  def on_load
-    navigationItem.hidesBackButton = true
-    navigationItem.title = @league.name
-    set_nav_bar_right_button "Done", action: :back_to_leagues_screen, type: UIBarButtonItemStyleDone
-    update_table_data
-  end
+  title 'League Invite'
 
-  def back_to_leagues_screen
-    navigationController.pop @leagues_screen
-  end
-
-  # table methods
-  def table_data
-    @table_data
-  end
-
-  def name_tapped(args={})
-    player = args[:player]
-    if player.accepted_invite
-      UIAlertView.alert "You can't remove #{player.name}"
-    elsif player.invited && !player.accepted_invite
-      UIAlertView.alert "You can't uninvite #{player.name}"
-    else
-      UIAlertView.alert("Invite #{player.name}?", buttons: ['Yes', 'No']) do |button|
-        if button == 'Yes'
-          @league.invite(player) do
-            if player.invited
-              update_table_data
-            else
-              SVProgressHUD.showErrorWithStatus("Couldn't invite #{player.name}")
-              update_table_data
-            end
-          end
-        end
-      end
-    end
+  def did_load
+    @accept_button.when_tapped { confirm_accept }
+    @decline_button.when_tapped { confirm_decline }
   end
 
   private
 
-  def update_table_data
-    @league.populate_invitable_players do
-      cells = []
-      @league.invitable_players.each { |player| cells << cell_for(player) }
-      @table_data = [{:cells => cells}]
-      super
-    end
+  def confirm_accept
+    puts "confirming accept"
   end
 
-  def cell_for(player)
-    cell = {:title => player.name,
-            :action => :name_tapped,
-            :arguments => {:player => player},
-            :cell_style => UITableViewCellStyleSubtitle,
-    }
-    if player.accepted_invite
-      cell[:subtitle] = 'member'
-      cell[:accessory_type] = UITableViewCellAccessoryCheckmark
-    elsif player.invited
-      cell[:subtitle] = 'invited'
-      cell[:accessory_type] = UITableViewCellAccessoryNone
-    end
-    cell
+  def confirm_decline
+    puts "confirming decline"
   end
 end

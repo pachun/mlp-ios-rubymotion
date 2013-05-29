@@ -26,12 +26,12 @@ class CreateLeagueScreen < Formotion::FormController
     @league.name = @form.render[:name]
     @league.plays_balls_back = @form.render[:plays_balls_back]
     @league.players_per_team = @form.render[:players_per_team].to_i
-    @league.rerack_cups = @form.render[:rerack_cups]
-    @league.extra_point_cups = @form.render[:extra_point_cups]
+    @league.rerack_cups_from_fm = @form.render[:rerack_cups]
+    @league.extra_point_cups_from_fm = @form.render[:extra_point_cups]
     @league.create do
       if league.created?
         SVProgressHUD.showSuccessWithStatus("Created #{@league.name}!")
-        open LeaguePlayerInviteScreen.new(league: @league, leagues_screen: @leagues_screen)
+        open InvitePlayersToLeagueScreen.new(league: @league, leagues_screen: @leagues_screen)
       else
         SVProgressHUD.showErrorWithStatus(@league.error)
         enable_create_button

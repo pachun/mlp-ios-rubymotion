@@ -1,7 +1,22 @@
 class League
-  attr_accessor :id, :name, :commissioner_id, :current_season, :created_at,
+  attr_accessor :id, :name, :commissioner, :current_season_id, :created_at,
     :players_per_team, :plays_balls_back, :rerack_cups, :extra_point_cups,
-    :error, :commissioner, :invitable_players
+    :error, :invitable_players
+
+  # constructor from hash
+  def self.from_hash(league_hash)
+    league = League.new
+    league.id = league_hash[:id] if league_hash.has_key?(:id)
+    league.name = league_hash[:name] if league_hash.has_key?(:name)
+    league.commissioner = Player.from_hash(league_hash[:commissioner]) if league_hash.has_key?(:commissioner)
+    league.current_season_id = league_hash[:current_season_id] if league_hash.has_key?(:current_season_id)
+    league.created_at = league_hash[:created_at] if league_hash.has_key?(:created_at)
+    league.players_per_team = league_hash[:players_per_team] if league_hash.has_key?(:players_per_team)
+    league.plays_balls_back = league_hash[:plays_balls_back] if league_hash.has_key?(:plays_balls_back)
+    league.rerack_cups = league_hash[:rerack_cups] if league_hash.has_key?(:rerack_cups)
+    league.extra_point_cups = league_hash[:extra_point_cups] if league_hash.has_key?(:extra_point_cups)
+    league
+  end
 
   # UI entry points
   def create(&block)
@@ -44,7 +59,7 @@ class League
   end
 
   # setter overrides for reading formotion input
-  def rerack_cups=(formotion_hash)
+  def rerack_cups_from_fm=(formotion_hash)
     @rerack_cups = ''
     formotion_hash.each_with_index do |(_,results_in_rerack), cup_number|
       if results_in_rerack
@@ -54,7 +69,7 @@ class League
     end
   end
 
-  def extra_point_cups=(formotion_hash)
+  def extra_point_cups_from_fm=(formotion_hash)
     @extra_point_cups = ''
     formotion_hash.each_with_index do |(_,worth_extra_points), cup_number|
       if worth_extra_points

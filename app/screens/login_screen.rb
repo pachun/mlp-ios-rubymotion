@@ -48,8 +48,8 @@ class LoginScreen < ProMotion::Screen
         open LeaguesScreen.new(nav_bar: true, player: @player), modal: true
       else
         SVProgressHUD.showErrorWithStatus(@player.error)
-        enable_login_button
       end
+      enable_login_button
     end
   end
 end
