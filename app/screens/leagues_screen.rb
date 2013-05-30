@@ -22,7 +22,7 @@ class LeaguesScreen < ProMotion::SectionedTableScreen
   end
 
   def invite_tapped(args={})
-    open LeaguePlayerInviteScreen.new(league: args[:league])
+    open LeaguePlayerInviteScreen.new(player: @player, league: args[:league])
   end
 
   private
@@ -52,7 +52,7 @@ class LeaguesScreen < ProMotion::SectionedTableScreen
   def cell_for_league(league, status)
     {
       :title => league.name,
-      :subtitle => league.commissioner.name,
+      :subtitle => league.commissioner.id == player.id ? 'You' : league.commissioner.name,
       :action => status == :member ? :league_tapped : :invite_tapped,
       :arguments => {league: league},
       :cell_style => UITableViewCellStyleSubtitle,

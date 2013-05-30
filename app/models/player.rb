@@ -1,6 +1,7 @@
 class Player
   attr_accessor :id, :name, :email, :password, :api_key, :registered_at,
-    :confirmed_password, :error, :saved, :leagues, :league_invites
+    :confirmed_password, :error, :saved, :leagues, :league_invites,
+    :accepted_invite, :declined_invite
 
   # from hash
   def self.from_hash(player)
@@ -50,6 +51,22 @@ class Player
       league_invite_hashes.each do |hash|
         @league_invites << League.from_hash(hash)
       end
+      block.call
+    end
+  end
+
+  def accept_league_invitation(league, &block)
+    @accepted_invite = false
+    BW::HTTP.put(BaseURL + "/player/#{@id}/accept_league/#{league.id}/#{@api_key}") do |response|
+      @accepted_invite = true if response.ok?
+      block.call
+    end
+  end
+
+  def decline_league_invitation(league, &block)
+    @declined_invite = false
+    BW::HTTP.delete(BaseURL + "/player/#{@id}/decline_league/#{league.id}/#{@api_key}") do |response|
+      @declined_invite = true if response.ok?
       block.call
     end
   end
