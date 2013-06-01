@@ -3,7 +3,7 @@ class InvitePlayersToLeagueScreen < ProMotion::TableScreen
 
   def on_load
     navigationItem.hidesBackButton = true
-    navigationItem.title = @league.name
+    navigationItem.title = "Invite Players"
     set_nav_bar_right_button "Done", action: :back_to_leagues_screen, type: UIBarButtonItemStyleDone
     update_table_data
   end

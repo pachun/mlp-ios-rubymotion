@@ -13,6 +13,7 @@ Motion::Project::App.setup do |app|
   app.fonts = ['Satisfy.ttf']
 
   app.pods do
+    pod 'NSData+MD5Digest'
     pod 'SVProgressHUD'
     pod 'Reachability'
   end

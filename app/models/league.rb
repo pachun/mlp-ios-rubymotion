@@ -1,7 +1,7 @@
 class League
-  attr_accessor :id, :name, :commissioner, :current_season_id, :created_at,
+  attr_accessor :id, :name, :commissioner, :current_season, :created_at,
     :players_per_team, :plays_balls_back, :rerack_cups, :extra_point_cups,
-    :error, :invitable_players
+    :error, :invitable_players, :updated, :players
 
   # constructor from hash
   def self.from_hash(league_hash)
@@ -9,7 +9,7 @@ class League
     league.id = league_hash[:id] if league_hash.has_key?(:id)
     league.name = league_hash[:name] if league_hash.has_key?(:name)
     league.commissioner = Player.from_hash(league_hash[:commissioner]) if league_hash.has_key?(:commissioner)
-    league.current_season_id = league_hash[:current_season_id] if league_hash.has_key?(:current_season_id)
+    league.current_season = Season.from_hash(league_hash[:current_season]) if league_hash.has_key?(:current_season)
     league.created_at = league_hash[:created_at] if league_hash.has_key?(:created_at)
     league.players_per_team = league_hash[:players_per_team] if league_hash.has_key?(:players_per_team)
     league.plays_balls_back = league_hash[:plays_balls_back] if league_hash.has_key?(:plays_balls_back)
@@ -51,6 +51,40 @@ class League
       end
       block.call
     end
+  end
+
+  def set_current_season(season, &block)
+    @updated = false
+    @current_season = season
+    data = {:league => {:current_season_id => @current_season.id}}
+    BW::HTTP.put(BaseURL + "/league/#{@id}/#{@commissioner.api_key}", {payload: data}) do |response|
+      @updated = true if response.ok?
+      block.call
+    end
+  end
+
+  def get_players(player, &block)
+    BW::HTTP.get(BaseURL + "/league/#{@id}/players/#{player.api_key}") do |response|
+      json_players = BW::JSON.parse(response.body.to_str)
+      @players = json_players.map { |p| Player.from_hash(p) }
+      get_player_gravatars(&block)
+    end
+  end
+
+  def get_player_gravatars(&block)
+    @players.each do |player|
+      player.grab_gravatar do
+        block.call if all_gravatars_in
+      end
+    end
+  end
+
+  def all_gravatars_in
+    all_in = true
+    @players.each do |player|
+      all_in = false if player.gravatar.nil?
+    end
+    all_in
   end
 
   # shortcuts

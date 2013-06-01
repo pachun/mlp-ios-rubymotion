@@ -31,7 +31,10 @@ class CreateLeagueScreen < Formotion::FormController
     @league.create do
       if league.created?
         SVProgressHUD.showSuccessWithStatus("Created #{@league.name}!")
-        open InvitePlayersToLeagueScreen.new(league: @league, leagues_screen: @leagues_screen)
+        create_season_screen = CreateSeasonScreen.new
+        create_season_screen.league = @league
+        create_season_screen.leagues_screen = @leagues_screen
+        open create_season_screen
       else
         SVProgressHUD.showErrorWithStatus(@league.error)
         enable_create_button
@@ -39,4 +42,3 @@ class CreateLeagueScreen < Formotion::FormController
     end
   end
 end
-

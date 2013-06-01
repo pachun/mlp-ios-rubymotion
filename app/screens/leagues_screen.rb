@@ -1,14 +1,12 @@
 class LeaguesScreen < ProMotion::SectionedTableScreen
-  attr_accessor :player, :table_data
+  attr_accessor :player, :table_data, :selected_league
 
-  title 'Welcome'
+  title 'Leagues'
 
   def on_load
     set_nav_bar_left_button('Sign Out', action: :logout)
     set_nav_bar_right_button(nil, action: :create_league, system_icon: UIBarButtonSystemItemAdd)
-    @table_data = [{title: 'Leagues', cells: []},
-                   {title: 'Invites', cells: []},
-    ]
+    @table_data = [{cells: []}]
   end
 
   def will_appear
@@ -18,7 +16,11 @@ class LeaguesScreen < ProMotion::SectionedTableScreen
 
   # cell tap actions
   def league_tapped(args={})
-    puts "league tapped"
+    @selected_league = args[:league]
+    # players, teams, games (played | unplayed), invites, more (league rules, past season stats)
+    tab_bar = UITabBarController.new
+    tab_bar.viewControllers = [players_nav, teams_nav, games_nav, invites_nav, more_nav]
+    present_modal(tab_bar)
   end
 
   def invite_tapped(args={})
@@ -27,6 +29,59 @@ class LeaguesScreen < ProMotion::SectionedTableScreen
 
   private
 
+  # tab bar screens
+  def players_nav
+    screen = PlayersScreen.new
+    screen.league = @selected_league
+    screen.player = @player
+    tab = UITabBarItem.alloc.initWithTitle('Players', image:'players.png'.uiimage, tag:0)
+    screen.setTabBarItem(tab)
+    nav = UINavigationController.new
+    nav << screen
+    nav
+  end
+
+  def teams_nav
+    screen = TeamsScreen.new
+    screen.league = @league
+    tab = UITabBarItem.alloc.initWithTitle('Teams', image:'teams.png'.uiimage, tag:0)
+    screen.setTabBarItem(tab)
+    nav = UINavigationController.new
+    nav << screen
+    nav
+  end
+
+  def games_nav
+    screen = GamesScreen.new
+    screen.league = @league
+    tab = UITabBarItem.alloc.initWithTitle('Games', image:'games.png'.uiimage, tag:0)
+    screen.setTabBarItem(tab)
+    nav = UINavigationController.new
+    nav << screen
+    nav
+  end
+
+  def invites_nav
+    screen = InvitesScreen.new
+    screen.league = @league
+    tab = UITabBarItem.alloc.initWithTitle('Invites', image:'invites.png'.uiimage, tag:0)
+    screen.setTabBarItem(tab)
+    nav = UINavigationController.new
+    nav << screen
+    nav
+  end
+
+  def more_nav
+    screen = MoreScreen.new
+    screen.league = @league
+    tab = UITabBarItem.alloc.initWithTitle('More', image:'more.png'.uiimage, tag:0)
+    screen.setTabBarItem(tab)
+    nav = UINavigationController.new
+    nav << screen
+    nav
+  end
+
+  # league / invite cell info updaters
   def populate_leagues
     @player.populate_leagues do
       cells = []
@@ -40,12 +95,14 @@ class LeaguesScreen < ProMotion::SectionedTableScreen
 
   def populate_invites
     @player.populate_invites do
-      cells = []
-      @player.league_invites.each do |league|
-        cells << cell_for_league(league, :invitee)
+      if @player.league_invites.count > 0
+        cells = []
+        @player.league_invites.each do |league|
+          cells << cell_for_league(league, :invitee)
+        end
+        @table_data[1] = {title: 'Invites', cells: cells}
+        update_table_data
       end
-      @table_data.last[:cells] = cells
-      update_table_data
     end
   end
 

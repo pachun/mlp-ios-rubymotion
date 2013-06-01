@@ -1,7 +1,7 @@
 class Player
   attr_accessor :id, :name, :email, :password, :api_key, :registered_at,
     :confirmed_password, :error, :saved, :leagues, :league_invites,
-    :accepted_invite, :declined_invite
+    :accepted_invite, :declined_invite, :gravatar
 
   # from hash
   def self.from_hash(player)
@@ -67,6 +67,15 @@ class Player
     @declined_invite = false
     BW::HTTP.delete(BaseURL + "/player/#{@id}/decline_league/#{league.id}/#{@api_key}") do |response|
       @declined_invite = true if response.ok?
+      block.call
+    end
+  end
+
+  def grab_gravatar(&block)
+    md5_email = NSData.MD5HexDigest(@email.downcase.dataUsingEncoding(NSUTF8StringEncoding))
+    url = "http://www.gravatar.com/avatar/#{md5_email}?s=100&d=monsterid"
+    BW::HTTP.get(url) do |response|
+      @gravatar = response.body.uiimage
       block.call
     end
   end
