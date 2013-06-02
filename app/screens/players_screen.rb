@@ -20,9 +20,9 @@ class PlayersScreen < UITableViewController
 
   # table setup
   def setup_table
+    @reuse_id = 'player cell'
     tableView.backgroundColor = BackgroundColor
     tableView.separatorStyle = UITableViewCellSeparatorStyleNone
-    @reuse_id = 'player cell'
     refresh_player_list
   end
 
@@ -63,7 +63,7 @@ class PlayersScreen < UITableViewController
         subview(UILabel, :player_point_percentage, :text => '0.62 point percentage')
       end
     end
-    cell.apply_constraints
+    cell.contentView.apply_constraints
     cell
   end
 

@@ -1,6 +1,7 @@
 class Player
-  attr_accessor :id, :name, :email, :password, :api_key, :registered_at,
-    :confirmed_password, :error, :saved, :leagues, :league_invites,
+  attr_accessor :id, :name, :email, :password, :api_key, :registered_at
+
+  attr_accessor :confirmed_password, :error, :saved, :leagues, :league_invites,
     :accepted_invite, :declined_invite, :gravatar
 
   # from hash
@@ -14,7 +15,6 @@ class Player
     new_player
   end
 
-  # UI entry points
   def signup(&block)
     @saved = false
     if valid_signup_credentials?
@@ -32,9 +32,12 @@ class Player
     end
   end
 
-  # only called in code, so no error checking
+  def logged_in?
+    @api_key.class == String && @api_key.length == 32
+  end
+
   def populate_leagues(&block)
-    BW::HTTP.post(BaseURL + "/player/#{@id}/leagues/#{@api_key}") do |response|
+    BW::HTTP.get(BaseURL + "/player/#{@id}/leagues/#{@api_key}") do |response|
       @leagues = []
       league_hashes = BW::JSON.parse(response.body.to_str)
       league_hashes.each do |hash|
@@ -45,7 +48,7 @@ class Player
   end
 
   def populate_invites(&block)
-    BW::HTTP.post(BaseURL + "/player/#{@id}/league_invites/#{@api_key}") do |response|
+    BW::HTTP.get(BaseURL + "/player/#{@id}/league_invites/#{@api_key}") do |response|
       @league_invites = []
       league_invite_hashes = BW::JSON.parse(response.body.to_str)
       league_invite_hashes.each do |hash|
@@ -80,14 +83,8 @@ class Player
     end
   end
 
-  # shortcuts
-  def logged_in?
-    @api_key.class == String && @api_key.length == 32
-  end
-
   private
 
-  # requests
   def send_login_request(&block)
     data = {:player => {:email => @email,
                         :password => @password,
@@ -121,7 +118,6 @@ class Player
     end
   end
 
-  # validations
   def valid_login_credentials?
     if valid_email && valid_password
       true

@@ -1,6 +1,6 @@
 class Season
   attr_accessor :id, :created_at, :name, :teams_locked, :league_id,
-    :league, :error, :created
+    :league, :error, :created, :teams
 
   # constructor from hash
   def self.from_hash(season_hash)
@@ -20,6 +20,13 @@ class Season
       send_create_season_request(&block)
     else
       block.call
+    end
+  end
+
+  # requests only called in code
+  def get_teams(player, &block)
+    BW::HTTP.get(BaseURL + "/season/#{@id}/teams/#{player.api_key}") do |response|
+      puts "response = #{response.body}"
     end
   end
 

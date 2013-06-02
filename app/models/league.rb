@@ -28,7 +28,7 @@ class League
     end
   end
 
-  # only called in code; no error checking
+  # requests only called in code; no error checking
   def populate_invitable_players(&block)
     @invitable_players = []
     BW::HTTP.post(BaseURL + "/league/#{@id}/invitable_players/#{@commissioner.api_key}") do |response|
@@ -90,6 +90,10 @@ class League
   # shortcuts
   def created?
     @id.class == Fixnum
+  end
+
+  def player_for(p)
+    @players.select { |player| player.id == p.id }.first
   end
 
   # setter overrides for reading formotion input

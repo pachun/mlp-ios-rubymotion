@@ -19,7 +19,7 @@ class LeaguesScreen < ProMotion::SectionedTableScreen
     @selected_league = args[:league]
     # players, teams, games (played | unplayed), invites, more (league rules, past season stats)
     tab_bar = UITabBarController.new
-    tab_bar.viewControllers = [players_nav, teams_nav, games_nav, invites_nav, more_nav]
+    tab_bar.viewControllers = [players_tab, teams_tab, games_tab, invites_tab, more_tab]
     present_modal(tab_bar)
   end
 
@@ -30,7 +30,7 @@ class LeaguesScreen < ProMotion::SectionedTableScreen
   private
 
   # tab bar screens
-  def players_nav
+  def players_tab
     screen = PlayersScreen.new
     screen.league = @selected_league
     screen.player = @player
@@ -41,9 +41,10 @@ class LeaguesScreen < ProMotion::SectionedTableScreen
     nav
   end
 
-  def teams_nav
+  def teams_tab
     screen = TeamsScreen.new
-    screen.league = @league
+    screen.league = @selected_league
+    screen.player = @player
     tab = UITabBarItem.alloc.initWithTitle('Teams', image:'teams.png'.uiimage, tag:0)
     screen.setTabBarItem(tab)
     nav = UINavigationController.new
@@ -51,7 +52,7 @@ class LeaguesScreen < ProMotion::SectionedTableScreen
     nav
   end
 
-  def games_nav
+  def games_tab
     screen = GamesScreen.new
     screen.league = @league
     tab = UITabBarItem.alloc.initWithTitle('Games', image:'games.png'.uiimage, tag:0)
@@ -61,7 +62,7 @@ class LeaguesScreen < ProMotion::SectionedTableScreen
     nav
   end
 
-  def invites_nav
+  def invites_tab
     screen = InvitesScreen.new
     screen.league = @league
     tab = UITabBarItem.alloc.initWithTitle('Invites', image:'invites.png'.uiimage, tag:0)
@@ -71,7 +72,7 @@ class LeaguesScreen < ProMotion::SectionedTableScreen
     nav
   end
 
-  def more_nav
+  def more_tab
     screen = MoreScreen.new
     screen.league = @league
     tab = UITabBarItem.alloc.initWithTitle('More', image:'more.png'.uiimage, tag:0)
@@ -101,8 +102,10 @@ class LeaguesScreen < ProMotion::SectionedTableScreen
           cells << cell_for_league(league, :invitee)
         end
         @table_data[1] = {title: 'Invites', cells: cells}
-        update_table_data
+      else
+        @table_data.delete_at(1) if !@table_data[1].nil?
       end
+      update_table_data
     end
   end
 
