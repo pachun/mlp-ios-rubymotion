@@ -1,4 +1,5 @@
 class LeaguePlayerInviteScreen < ProMotion::Screen
+  attr_accessor :accept_button, :decline_button
   stylesheet :league_player_invite_sheet
 
   layout :root do

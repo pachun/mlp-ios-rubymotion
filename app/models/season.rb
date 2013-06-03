@@ -1,8 +1,9 @@
 class Season
   attr_accessor :id, :created_at, :name, :teams_locked, :league_id,
-    :league, :error, :created, :teams
+    :league, :teams
 
-  # constructor from hash
+  attr_accessor :error, :created
+
   def self.from_hash(season_hash)
     season = Season.new
     season.id = season_hash[:id] if season_hash.has_key?(:id)
@@ -17,13 +18,12 @@ class Season
   def create(&block)
     @created = false
     if valid_name?
-      send_create_season_request(&block)
+      save(&block)
     else
       block.call
     end
   end
 
-  # requests only called in code
   def get_teams(player, &block)
     BW::HTTP.get(BaseURL + "/season/#{@id}/teams/#{player.api_key}") do |response|
       puts "response = #{response.body}"
@@ -32,7 +32,6 @@ class Season
 
   private
 
-  # validations
   def valid_name?
     if @name.class == String && @name.length >= 2 && @name.length <= 20
       true
@@ -42,8 +41,7 @@ class Season
     end
   end
 
-  # requests
-  def send_create_season_request(&block)
+  def save(&block)
     data = {:season => {:name => @name,
                         :league_id => @league.id
     }}

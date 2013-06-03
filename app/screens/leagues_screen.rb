@@ -4,8 +4,7 @@ class LeaguesScreen < ProMotion::SectionedTableScreen
   title 'Leagues'
 
   def on_load
-    set_nav_bar_left_button('Sign Out', action: :logout)
-    set_nav_bar_right_button(nil, action: :create_league, system_icon: UIBarButtonSystemItemAdd)
+    setup_navbar
     @table_data = [{cells: []}]
   end
 
@@ -14,22 +13,39 @@ class LeaguesScreen < ProMotion::SectionedTableScreen
     populate_invites
   end
 
-  # cell tap actions
-  def league_tapped(args={})
-    @selected_league = args[:league]
-    # players, teams, games (played | unplayed), invites, more (league rules, past season stats)
+  def tapped(touched)
+    if touched[:type] == :league
+      @selected_league = touched[:league]
+      open_league_overview
+    elsif touched[:type] == :invite
+      open LeaguePlayerInviteScreen.new(player: @player, league: touched[:league])
+    end
+  end
+
+  private
+
+  def setup_navbar
+    set_nav_bar_left_button('Sign Out', action: :logout)
+    set_nav_bar_right_button(nil, action: :create_league, system_icon: UIBarButtonSystemItemAdd)
+  end
+
+  def logout
+    dismiss_modal
+  end
+
+  def create_league
+    create_league_screen = CreateLeagueScreen.new
+    create_league_screen.player = @player
+    create_league_screen.leagues_screen = self
+    open create_league_screen
+  end
+
+  def open_league_overview
     tab_bar = UITabBarController.new
     tab_bar.viewControllers = [players_tab, teams_tab, games_tab, invites_tab, more_tab]
     present_modal(tab_bar)
   end
 
-  def invite_tapped(args={})
-    open LeaguePlayerInviteScreen.new(player: @player, league: args[:league])
-  end
-
-  private
-
-  # tab bar screens
   def players_tab
     screen = PlayersScreen.new
     screen.league = @selected_league
@@ -82,25 +98,18 @@ class LeaguesScreen < ProMotion::SectionedTableScreen
     nav
   end
 
-  # league / invite cell info updaters
   def populate_leagues
     @player.populate_leagues do
-      cells = []
-      @player.leagues.each do |league|
-        cells << cell_for_league(league, :member)
-      end
+      cells = @player.leagues.map { |league| cell_for(:league, league) }
       @table_data.first[:cells] = cells
       update_table_data
     end
   end
 
   def populate_invites
-    @player.populate_invites do
-      if @player.league_invites.count > 0
-        cells = []
-        @player.league_invites.each do |league|
-          cells << cell_for_league(league, :invitee)
-        end
+    @player.populate_invited_leagues do
+      if @player.invited_leagues.count > 0
+        cells = @player.invited_leagues.map { |league| cell_for(:invite, league) }
         @table_data[1] = {title: 'Invites', cells: cells}
       else
         @table_data.delete_at(1) if !@table_data[1].nil?
@@ -109,26 +118,14 @@ class LeaguesScreen < ProMotion::SectionedTableScreen
     end
   end
 
-  def cell_for_league(league, status)
+  def cell_for(type, league)
     {
       :title => league.name,
-      :subtitle => league.commissioner.id == player.id ? 'You' : league.commissioner.name,
-      :action => status == :member ? :league_tapped : :invite_tapped,
-      :arguments => {league: league},
+      :subtitle => league.commissioner.id == @player.id ? 'You' : league.commissioner.name,
+      :action => :tapped,
+      :arguments => {:type => type, :league => league},
       :cell_style => UITableViewCellStyleSubtitle,
       :accessory_type => UITableViewCellAccessoryDisclosureIndicator,
     }
-  end
-
-  # nav bar button actions
-  def logout
-    dismiss_modal
-  end
-
-  def create_league
-    create_league_screen = CreateLeagueScreen.new
-    create_league_screen.player = @player
-    create_league_screen.leagues_screen = self
-    open create_league_screen
   end
 end

@@ -1,4 +1,5 @@
 class LoginScreen < ProMotion::Screen
+  attr_accessor :email_field, :password_field, :login_button, :signup_button
   stylesheet :login_sheet
 
   layout :root do

@@ -11,14 +11,6 @@ class CreateLeagueScreen < Formotion::FormController
 
   private
 
-  def enable_create_button
-    @form.on_submit { create_league }
-  end
-
-  def disable_create_button
-    @form.on_submit {}
-  end
-
   def create_league
     disable_create_button
     @league = League.new
@@ -31,14 +23,26 @@ class CreateLeagueScreen < Formotion::FormController
     @league.create do
       if league.created?
         SVProgressHUD.showSuccessWithStatus("Created #{@league.name}!")
-        create_season_screen = CreateSeasonScreen.new
-        create_season_screen.league = @league
-        create_season_screen.leagues_screen = @leagues_screen
-        open create_season_screen
+        open_create_season_screen
       else
         SVProgressHUD.showErrorWithStatus(@league.error)
         enable_create_button
       end
     end
+  end
+
+  def open_create_season_screen
+    create_season_screen = CreateSeasonScreen.new
+    create_season_screen.league = @league
+    create_season_screen.leagues_screen = @leagues_screen
+    open create_season_screen
+  end
+
+  def enable_create_button
+    @form.on_submit { create_league }
+  end
+
+  def disable_create_button
+    @form.on_submit {}
   end
 end

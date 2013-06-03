@@ -1,11 +1,5 @@
 class SignupScreen < ProMotion::Screen
-
-  # fields
-  attr_accessor :name_field, :email_field, :password_field, :confirm_password_field
-  # buttons
-  attr_accessor :signup_button, :login_button
-
-  attr_accessor :player, :login_screen
+  attr_accessor :player
 
   # setup transition style when the view is constructed
   def on_load
@@ -53,17 +47,11 @@ class SignupScreen < ProMotion::Screen
     @player.signup do
       if @player.saved
         SVProgressHUD.showSuccessWithStatus('Player Created!')
-        animate_to_login
+        close(email:@player.email, password:@player.password)
       else
         SVProgressHUD.showErrorWithStatus(@player.error)
         enable_signup_button
       end
     end
-  end
-
-  def animate_to_login
-    @login_screen.email_field.text = @player.email
-    @login_screen.password_field.text = @player.password
-    dismissViewControllerAnimated(true, completion:nil)
   end
 end

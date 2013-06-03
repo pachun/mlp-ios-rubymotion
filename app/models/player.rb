@@ -1,10 +1,10 @@
 class Player
-  attr_accessor :id, :name, :email, :password, :api_key, :registered_at
+  attr_accessor :id, :name, :email, :password, :api_key, :registered_at,
+    :leagues, :invited_leagues, :gravatar
 
-  attr_accessor :confirmed_password, :error, :saved, :leagues, :league_invites,
-    :accepted_invite, :declined_invite, :gravatar
+  attr_accessor :confirmed_password, :error, :saved,
+    :accepted_invite, :declined_invite
 
-  # from hash
   def self.from_hash(player)
     new_player = Player.new
     new_player.id = player[:id] if player.has_key?(:id)
@@ -18,7 +18,7 @@ class Player
   def signup(&block)
     @saved = false
     if valid_signup_credentials?
-      send_signup_request(&block)
+      save(&block)
     else
       block.call
     end
@@ -26,7 +26,7 @@ class Player
 
   def login(&block)
     if valid_login_credentials?
-      send_login_request(&block)
+      authenticate(&block)
     else
       block.call
     end
@@ -40,19 +40,17 @@ class Player
     BW::HTTP.get(BaseURL + "/player/#{@id}/leagues/#{@api_key}") do |response|
       @leagues = []
       league_hashes = BW::JSON.parse(response.body.to_str)
-      league_hashes.each do |hash|
-        @leagues << League.from_hash(hash)
-      end
+      @leagues = league_hashes.map { |league_json| League.from_hash(league_json) }
       block.call
     end
   end
 
-  def populate_invites(&block)
-    BW::HTTP.get(BaseURL + "/player/#{@id}/league_invites/#{@api_key}") do |response|
-      @league_invites = []
+  def populate_invited_leagues(&block)
+    BW::HTTP.get(BaseURL + "/player/#{@id}/invited_leagues/#{@api_key}") do |response|
+      @invited_leagues = []
       league_invite_hashes = BW::JSON.parse(response.body.to_str)
-      league_invite_hashes.each do |hash|
-        @league_invites << League.from_hash(hash)
+      @invited_leagues = league_invite_hashes.map do |league_invite_json|
+        League.from_hash(league_invite_json)
       end
       block.call
     end
@@ -85,7 +83,7 @@ class Player
 
   private
 
-  def send_login_request(&block)
+  def authenticate(&block)
     data = {:player => {:email => @email,
                         :password => @password,
     }}
@@ -102,7 +100,7 @@ class Player
     end
   end
 
-  def send_signup_request(&block)
+  def save(&block)
     data = {:player => {:name => @name,
                         :email => @email,
                         :password => @password,

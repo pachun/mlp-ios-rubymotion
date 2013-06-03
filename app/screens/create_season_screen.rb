@@ -3,14 +3,18 @@ class CreateSeasonScreen < Formotion::FormController
   attr_accessor :form, :league, :leagues_screen
 
   def init
-    navigationItem.hidesBackButton = true
-    navigationItem.title = 'New Season'
+    setup_navbar
     build_form
     enable_create_button
     initWithForm(@form)
   end
 
   private
+
+  def setup_navbar
+    navigationItem.hidesBackButton = true
+    navigationItem.title = 'New Season'
+  end
 
   def enable_create_button
     @form.on_submit { create_season }
@@ -21,7 +25,7 @@ class CreateSeasonScreen < Formotion::FormController
   end
 
   def create_season
-    # disable_create_button
+    disable_create_button
     @season = Season.new
     @season.name = @form.render[:name]
     @season.league = @league

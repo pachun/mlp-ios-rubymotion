@@ -1,6 +1,6 @@
 class PlayersScreen < UITableViewController
   attr_accessor :reuse_id, :league, :player
-  stylesheet :players_sheet
+  stylesheet :player_cell_sheet
 
   def viewDidLoad
     super

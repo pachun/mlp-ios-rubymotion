@@ -1,5 +1,5 @@
 class LeaguePlayerInviteScreen < ProMotion::Screen
-  attr_accessor :player, :league, :accept_button, :decline_button
+  attr_accessor :player, :league
 
   title 'League Invite'
 
@@ -12,30 +12,34 @@ class LeaguePlayerInviteScreen < ProMotion::Screen
 
   def confirm_accept
     UIAlertView.alert("Join #{@league.name}?", buttons: ['Yes, Accept!', 'No']) do |button|
-      if button != 'No'
-        @player.accept_league_invitation(@league) do
-          if @player.accepted_invite
-            SVProgressHUD.showSuccessWithStatus("Joined #{@league.name}!")
-            navigationController.pop
-          else
-            SVProgressHUD.showErrorWithStatus("Unable to join #{@league.name}!")
-          end
-        end
-      end
+      accept_invitation if button != 'No'
     end
   end
 
   def confirm_decline
     UIAlertView.alert("Decline #{@league.name} invite?", buttons: ['Yes', 'Woops, No!']) do |button|
-      if button == 'Yes'
-        @player.decline_league_invitation(@league) do
-          if @player.declined_invite
-            SVProgressHUD.showSuccessWithStatus("Invite discarded!")
-            navigationController.pop
-          else
-            SVProgressHUD.showErrorWithStatus("Uh oh. This invite is impervious to deletion!")
-          end
-        end
+      decline_invitation if button == 'Yes'
+    end
+  end
+
+  def accept_invitation
+    @player.accept_league_invitation(@league) do
+      if @player.accepted_invite
+        SVProgressHUD.showSuccessWithStatus("Joined #{@league.name}!")
+        navigationController.pop
+      else
+        SVProgressHUD.showErrorWithStatus("Unable to join #{@league.name}!")
+      end
+    end
+  end
+
+  def decline_invitation
+    @player.decline_league_invitation(@league) do
+      if @player.declined_invite
+        SVProgressHUD.showSuccessWithStatus('Invite discarded!')
+        navigationController.pop
+      else
+        SVProgressHUD.showErrorWithStatus('Uh oh. This invite is impervious to deletion!')
       end
     end
   end

@@ -2,23 +2,11 @@ class InvitePlayersToLeagueScreen < ProMotion::TableScreen
   attr_accessor :league, :table_data, :leagues_screen
 
   def on_load
-    navigationItem.hidesBackButton = true
-    navigationItem.title = "Invite Players"
-    set_nav_bar_right_button "Done", action: :back_to_leagues_screen, type: UIBarButtonItemStyleDone
+    setup_navbar
     update_table_data
   end
 
-  def back_to_leagues_screen
-    navigationController.pop @leagues_screen
-  end
-
-  # table methods
-  def table_data
-    @table_data
-  end
-
-  def name_tapped(args={})
-    player = args[:player]
+  def tapped(player)
     first_name = player.name.split(' ').first
     if player.accepted_invite
       UIAlertView.alert "You can't remove #{first_name}"
@@ -31,10 +19,19 @@ class InvitePlayersToLeagueScreen < ProMotion::TableScreen
 
   private
 
+  def setup_navbar
+    navigationItem.hidesBackButton = true
+    navigationItem.title = "Invite Players"
+    set_nav_bar_right_button "Save", action: :pop_to_leagues_screen, type: UIBarButtonItemStyleDone
+  end
+
+  def pop_to_leagues_screen
+    navigationController.pop @leagues_screen
+  end
+
   def update_table_data
     @league.populate_invitable_players do
-      cells = []
-      @league.invitable_players.each { |player| cells << cell_for(player) }
+      cells = @league.invitable_players.map { |player| cell_for(player) }
       @table_data = [{:cells => cells}]
       super
     end
@@ -42,8 +39,8 @@ class InvitePlayersToLeagueScreen < ProMotion::TableScreen
 
   def cell_for(player)
     cell = {:title => player.name,
-            :action => :name_tapped,
-            :arguments => {:player => player},
+            :action => :tapped,
+            :arguments => player,
             :cell_style => UITableViewCellStyleSubtitle,
     }
     if player.accepted_invite
@@ -56,18 +53,19 @@ class InvitePlayersToLeagueScreen < ProMotion::TableScreen
     cell
   end
 
-  # actual inviting done here
   def confirm_invite_for(player)
     UIAlertView.alert("Invite #{player.name}?", buttons: ['Yes', 'No']) do |button|
-      if button == 'Yes'
-        @league.invite(player) do
-          if player.invited
-            update_table_data
-          else
-            SVProgressHUD.showErrorWithStatus("Couldn't invite #{player.name}")
-            update_table_data
-          end
-        end
+      invite(player) if button == 'Yes'
+    end
+  end
+
+  def invite(player)
+    @league.invite(player) do
+      if player.invited
+        update_table_data
+      else
+        SVProgressHUD.showErrorWithStatus("Couldn't invite #{player.name}")
+        update_table_data
       end
     end
   end

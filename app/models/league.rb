@@ -1,9 +1,10 @@
 class League
   attr_accessor :id, :name, :commissioner, :current_season, :created_at,
     :players_per_team, :plays_balls_back, :rerack_cups, :extra_point_cups,
-    :error, :invitable_players, :updated, :players
+    :players, :invitable_players
 
-  # constructor from hash
+  attr_accessor :error, :updated
+
   def self.from_hash(league_hash)
     league = League.new
     league.id = league_hash[:id] if league_hash.has_key?(:id)
@@ -18,37 +19,26 @@ class League
     league
   end
 
-  # UI entry points
   def create(&block)
     @created = false
     if valid_name? && valid_ppt?
-      send_create_request(&block)
+      save(&block)
     else
       block.call
     end
   end
 
-  # requests only called in code; no error checking
   def populate_invitable_players(&block)
-    @invitable_players = []
-    BW::HTTP.post(BaseURL + "/league/#{@id}/invitable_players/#{@commissioner.api_key}") do |response|
-      BW::JSON.parse(response.body.to_str).each do |p|
-        player = InvitedPlayer.new
-        player.id = p[:id]
-        player.name = p[:name]
-        player.invited = p[:invited]
-        player.accepted_invite = p[:accepted_invite]
-        @invitable_players << player
-      end
+    BW::HTTP.get(BaseURL + "/league/#{@id}/invitable_players/#{@commissioner.api_key}") do |response|
+      invitable_player_hashes = BW::JSON.parse(response.body.to_str)
+      @invitable_players = invitable_player_hashes.map { |player_json| InvitedLeaguePlayer.from_hash(player_json) }
       block.call
     end
   end
 
   def invite(player, &block)
     BW::HTTP.post(BaseURL + "/league/#{@id}/invite/#{player.id}/#{@commissioner.api_key}") do |response|
-      if response.ok?
-        player.invited = true
-      end
+      player.invited = true if response.ok?
       block.call
     end
   end
@@ -65,8 +55,8 @@ class League
 
   def get_players(player, &block)
     BW::HTTP.get(BaseURL + "/league/#{@id}/players/#{player.api_key}") do |response|
-      json_players = BW::JSON.parse(response.body.to_str)
-      @players = json_players.map { |p| Player.from_hash(p) }
+      player_hashes = BW::JSON.parse(response.body.to_str)
+      @players = player_hashes.map { |player_json| Player.from_hash(player_json) }
       get_player_gravatars(&block)
     end
   end
@@ -80,20 +70,15 @@ class League
   end
 
   def all_gravatars_in
-    all_in = true
-    @players.each do |player|
-      all_in = false if player.gravatar.nil?
-    end
-    all_in
+    true if @players.count == @players.select{ |p| p.gravatar }.count
   end
 
-  # shortcuts
   def created?
     @id.class == Fixnum
   end
 
   def player_for(p)
-    @players.select { |player| player.id == p.id }.first
+    @players.select{ |player| player.id == p.id }.first
   end
 
   # setter overrides for reading formotion input
@@ -138,8 +123,7 @@ class League
     end
   end
 
-  # requests
-  def send_create_request(&block)
+  def save(&block)
     data = {:league => {:name => @name,
                         :commissioner_id => @commissioner.id,
                         :players_per_team => @players_per_team,

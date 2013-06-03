@@ -1,4 +1,4 @@
-Teacup::Stylesheet.new(:players_sheet) do
+Teacup::Stylesheet.new(:player_cell_sheet) do
   import :mlp
 
   style :cell,

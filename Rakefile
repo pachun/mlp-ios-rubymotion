@@ -7,6 +7,7 @@ Bundler.require
 Motion::Project::App.setup do |app|
   # Use `rake config' to see complete project settings.
   app.name = 'mlp'
+  app.prerendered_icon = true
   app.icons = ['large_pong_man.png']
   app.device_family = [:iphone, :ipad]
 
