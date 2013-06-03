@@ -1,5 +1,5 @@
 class LeaguesScreen < ProMotion::SectionedTableScreen
-  attr_accessor :player, :table_data, :selected_league
+  attr_accessor :signedin_player, :table_data, :selected_league
 
   title 'Leagues'
 
@@ -18,7 +18,7 @@ class LeaguesScreen < ProMotion::SectionedTableScreen
       @selected_league = touched[:league]
       open_league_overview
     elsif touched[:type] == :invite
-      open LeaguePlayerInviteScreen.new(player: @player, league: touched[:league])
+      open LeaguePlayerInviteScreen.new(signedin_player: @signedin_player, league: touched[:league])
     end
   end
 
@@ -35,7 +35,7 @@ class LeaguesScreen < ProMotion::SectionedTableScreen
 
   def create_league
     create_league_screen = CreateLeagueScreen.new
-    create_league_screen.player = @player
+    create_league_screen.signedin_player = @signedin_player
     create_league_screen.leagues_screen = self
     open create_league_screen
   end
@@ -49,7 +49,7 @@ class LeaguesScreen < ProMotion::SectionedTableScreen
   def players_tab
     screen = PlayersScreen.new
     screen.league = @selected_league
-    screen.player = @player
+    screen.signedin_player = @signedin_player
     tab = UITabBarItem.alloc.initWithTitle('Players', image:'players.png'.uiimage, tag:0)
     screen.setTabBarItem(tab)
     nav = UINavigationController.new
@@ -60,7 +60,7 @@ class LeaguesScreen < ProMotion::SectionedTableScreen
   def teams_tab
     screen = TeamsScreen.new
     screen.league = @selected_league
-    screen.player = @player
+    screen.signedin_player = @signedin_player
     tab = UITabBarItem.alloc.initWithTitle('Teams', image:'teams.png'.uiimage, tag:0)
     screen.setTabBarItem(tab)
     nav = UINavigationController.new
@@ -99,17 +99,17 @@ class LeaguesScreen < ProMotion::SectionedTableScreen
   end
 
   def populate_leagues
-    @player.populate_leagues do
-      cells = @player.leagues.map { |league| cell_for(:league, league) }
+    @signedin_player.populate_leagues do
+      cells = @signedin_player.leagues.map { |league| cell_for(:league, league) }
       @table_data.first[:cells] = cells
       update_table_data
     end
   end
 
   def populate_invites
-    @player.populate_invited_leagues do
-      if @player.invited_leagues.count > 0
-        cells = @player.invited_leagues.map { |league| cell_for(:invite, league) }
+    @signedin_player.populate_invited_leagues do
+      if @signedin_player.invited_leagues.count > 0
+        cells = @signedin_player.invited_leagues.map { |league| cell_for(:invite, league) }
         @table_data[1] = {title: 'Invites', cells: cells}
       else
         @table_data.delete_at(1) if !@table_data[1].nil?
@@ -121,7 +121,7 @@ class LeaguesScreen < ProMotion::SectionedTableScreen
   def cell_for(type, league)
     {
       :title => league.name,
-      :subtitle => league.commissioner.id == @player.id ? 'You' : league.commissioner.name,
+      :subtitle => league.commissioner.id == @signedin_player.id ? 'You' : league.commissioner.name,
       :action => :tapped,
       :arguments => {:type => type, :league => league},
       :cell_style => UITableViewCellStyleSubtitle,

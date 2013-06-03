@@ -1,5 +1,5 @@
 class TeamsScreen < UITableViewController
-  attr_accessor :reuse_id, :league, :player
+  attr_accessor :reuse_id, :league, :signedin_player
 
   def viewDidLoad
     super
@@ -13,7 +13,7 @@ class TeamsScreen < UITableViewController
   end
 
   def create_team
-    navigationController << CreateTeamScreen.new(league: @league, creater: @player)
+    navigationController << CreateTeamScreen.new(league: @league, creater: @signedin_player)
   end
 
   def setup_table
@@ -24,7 +24,7 @@ class TeamsScreen < UITableViewController
   end
 
   def refresh_team_list
-    @league.current_season.get_teams(@player) do
+    @league.current_season.get_teams(@signedin_player) do
       tableView.reloadData
     end
   end

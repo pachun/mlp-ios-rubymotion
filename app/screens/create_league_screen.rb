@@ -1,6 +1,6 @@
 class CreateLeagueScreen < Formotion::FormController
   include ProMotion::ScreenModule
-  attr_accessor :form, :league, :player, :leagues_screen
+  attr_accessor :signedin_player, :league, :form, :leagues_screen
 
   def init
     navigationItem.title = 'New League'
@@ -14,7 +14,7 @@ class CreateLeagueScreen < Formotion::FormController
   def create_league
     disable_create_button
     @league = League.new
-    @league.commissioner = @player
+    @league.commissioner = @signedin_player
     @league.name = @form.render[:name]
     @league.plays_balls_back = @form.render[:plays_balls_back]
     @league.players_per_team = @form.render[:players_per_team].to_i

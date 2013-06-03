@@ -1,7 +1,7 @@
 class CreateTeamScreen < ProMotion::Screen
   attr_accessor :name_field, :invite_button,
-    :player2_name, :player2_icon,
-    :player3_name, :player3_icon
+    :teammate1_name, :teammate1_icon,
+    :teammate2_name, :teammate2_icon
 
   stylesheet :create_team_sheet
 
@@ -10,15 +10,15 @@ class CreateTeamScreen < ProMotion::Screen
       @name_field = subview(UITextField, :name_field)
     end
 
-    subview(UILabel, :player1_name, :text => @creater.name)
-    subview(UIImageView, :player1_icon, :image => @league.player_for(@creater).gravatar)
+    subview(UILabel, :creater_name, :text => @creater.name)
+    subview(UIImageView, :creater_icon, :image => @league.player_for(@creater).gravatar)
 
-    @player2_name = subview(UILabel, :player2_name, :text => 'Second Player')
-    @player2_icon = subview(UIImageView, :player2_icon)
+    @teammate1_name = subview(UILabel, :teammate1_name, :text => 'Second Player')
+    @teammate1_icon = subview(UIImageView, :teammate1_icon)
 
     if @league.players_per_team == 3
-      @player3_name = subview(UILabel, :player3_name, :text => 'Third Player')
-      @player3_icon = subview(UIImageView, :player3_icon)
+      @teammate2_name = subview(UILabel, :teammate2_name, :text => 'Third Player')
+      @teammate2_icon = subview(UIImageView, :teammate2_icon)
     end
 
     @invite_button = subview(UIButton.custom, :invite_button)

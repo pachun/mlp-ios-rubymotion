@@ -27,7 +27,7 @@ Teacup::Stylesheet.new(:create_team_sheet) do
     background: :clear.uicolor,
     textAlignment: :center.uialignment
 
-  style :player_icon,
+  style :teammate_icon,
     layer: {
       masksToBounds: true,
       cornerRadius: 30,
@@ -35,48 +35,48 @@ Teacup::Stylesheet.new(:create_team_sheet) do
       borderColor: TrimColor,
     }
 
-  style :player1_name, extends: :label,
+  style :creater_name, extends: :label,
     constraints: [
       constrain_width(ControlWidth),
       constrain_below(:name_field, 10),
       constrain(:center_x).equals(:superview, :center_x),
     ]
 
-  style :player1_icon, extends: :player_icon,
+  style :creater_icon, extends: :teammate_icon,
     constraints: [
       constrain_width(60),
       constrain_height(60),
-      constrain_below(:player1_name, 5),
+      constrain_below(:creater_name, 5),
       constrain(:center_x).equals(:superview, :center_x),
     ]
 
-  style :player2_name, extends: :label,
+  style :teammate1_name, extends: :label,
     constraints: [
       constrain_width(ControlWidth),
-      constrain_below(:player1_icon, 5),
+      constrain_below(:creater_icon, 5),
       constrain(:center_x).equals(:superview, :center_x),
     ]
 
-  style :player2_icon, extends: :player_icon,
+  style :teammate1_icon, extends: :teammate_icon,
     constraints: [
       constrain_width(60),
       constrain_height(60),
-      constrain_below(:player2_name, 5),
+      constrain_below(:teammate1_name, 5),
       constrain(:center_x).equals(:superview, :center_x),
     ]
 
-  style :player3_name, extends: :label,
+  style :teammate2_name, extends: :label,
     constraints: [
       constrain_width(ControlWidth),
-      constrain_below(:player2_icon, 5),
+      constrain_below(:teammate1_icon, 5),
       constrain(:center_x).equals(:superview, :center_x),
     ]
 
-  style :player3_icon, extends: :player_icon,
+  style :teammate2_icon, extends: :teammate_icon,
     constraints: [
       constrain_width(60),
       constrain_height(60),
-      constrain_below(:player3_name, 5),
+      constrain_below(:teammate2_name, 5),
       constrain(:center_x).equals(:superview, :center_x),
     ]
 

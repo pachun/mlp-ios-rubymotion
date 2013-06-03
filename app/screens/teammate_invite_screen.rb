@@ -3,12 +3,12 @@ class TeammateInviteScreen < ProMotion::TableScreen
 
   title 'Teammate'
 
-  def selected(selected_player)
-    close(selected_player: selected_player)
-  end
-
   def table_data
     [{:cells => cells}]
+  end
+
+  def selected(player)
+    close(teammate: player)
   end
 
   private

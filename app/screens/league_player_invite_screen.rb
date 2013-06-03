@@ -1,5 +1,5 @@
 class LeaguePlayerInviteScreen < ProMotion::Screen
-  attr_accessor :player, :league
+  attr_accessor :signedin_player, :league
 
   title 'League Invite'
 
@@ -23,8 +23,8 @@ class LeaguePlayerInviteScreen < ProMotion::Screen
   end
 
   def accept_invitation
-    @player.accept_league_invitation(@league) do
-      if @player.accepted_invite
+    @signedin_player.accept_league_invitation(@league) do
+      if @signedin_player.accepted_invite
         SVProgressHUD.showSuccessWithStatus("Joined #{@league.name}!")
         navigationController.pop
       else
@@ -34,8 +34,8 @@ class LeaguePlayerInviteScreen < ProMotion::Screen
   end
 
   def decline_invitation
-    @player.decline_league_invitation(@league) do
-      if @player.declined_invite
+    @signedin_player.decline_league_invitation(@league) do
+      if @signedin_player.declined_invite
         SVProgressHUD.showSuccessWithStatus('Invite discarded!')
         navigationController.pop
       else

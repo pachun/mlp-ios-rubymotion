@@ -43,7 +43,7 @@ class LoginScreen < ProMotion::Screen
     @player.password = @password_field.text
     @player.login do
       if @player.logged_in?
-        open LeaguesScreen.new(nav_bar: true, player: @player), modal: true
+        open LeaguesScreen.new(nav_bar: true, signedin_player: @player), modal: true
       else
         SVProgressHUD.showErrorWithStatus(@player.error)
       end

@@ -1,5 +1,5 @@
 class PlayersScreen < UITableViewController
-  attr_accessor :reuse_id, :league, :player
+  attr_accessor :reuse_id, :league, :signedin_player
   stylesheet :player_cell_sheet
 
   def viewDidLoad
@@ -27,7 +27,7 @@ class PlayersScreen < UITableViewController
   end
 
   def refresh_player_list
-    @league.get_players(@player) do
+    @league.get_players(@signedin_player) do
       tableView.reloadData
     end
   end
