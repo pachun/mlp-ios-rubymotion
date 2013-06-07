@@ -10,7 +10,7 @@ class League
     league.id = league_hash[:id] if league_hash.has_key?(:id)
     league.name = league_hash[:name] if league_hash.has_key?(:name)
     league.commissioner = Player.from_hash(league_hash[:commissioner]) if league_hash.has_key?(:commissioner)
-    league.current_season = Season.from_hash(league_hash[:current_season]) if league_hash.has_key?(:current_season)
+    league.current_season = Season.from_hash(league_hash[:current_season], with_league:league) if league_hash.has_key?(:current_season)
     league.created_at = league_hash[:created_at] if league_hash.has_key?(:created_at)
     league.players_per_team = league_hash[:players_per_team] if league_hash.has_key?(:players_per_team)
     league.plays_balls_back = league_hash[:plays_balls_back] if league_hash.has_key?(:plays_balls_back)
@@ -79,6 +79,10 @@ class League
 
   def player_for(p)
     @players.select{ |player| player.id == p.id }.first
+  end
+
+  def player_with_id(id)
+    @players.select{ |player| player.id == id }.first
   end
 
   # setter overrides for reading formotion input

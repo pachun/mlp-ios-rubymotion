@@ -1,6 +1,6 @@
 class Player
   attr_accessor :id, :name, :email, :password, :api_key, :registered_at,
-    :leagues, :invited_leagues, :gravatar
+    :leagues, :invited_leagues, :gravatar, :invited_teams
 
   attr_accessor :confirmed_password, :error, :saved,
     :accepted_invite, :declined_invite
@@ -36,9 +36,21 @@ class Player
     @api_key.class == String && @api_key.length == 32
   end
 
+  def accepted_another_unrejected_team?
+    @invited_teams.each do |team|
+      return true if !team.nullified? && team.was_accepted_by(self)
+    end
+    false
+  end
+
+  def accepted_and_unrejected_team
+    @invited_teams.each do |team|
+      return team if !team.nullified? && team.was_accepted_by(self)
+    end
+  end
+
   def populate_leagues(&block)
     BW::HTTP.get(BaseURL + "/player/#{@id}/leagues/#{@api_key}") do |response|
-      @leagues = []
       league_hashes = BW::JSON.parse(response.body.to_str)
       @leagues = league_hashes.map { |league_json| League.from_hash(league_json) }
       block.call
@@ -47,7 +59,6 @@ class Player
 
   def populate_invited_leagues(&block)
     BW::HTTP.get(BaseURL + "/player/#{@id}/invited_leagues/#{@api_key}") do |response|
-      @invited_leagues = []
       league_invite_hashes = BW::JSON.parse(response.body.to_str)
       @invited_leagues = league_invite_hashes.map do |league_invite_json|
         League.from_hash(league_invite_json)
@@ -74,9 +85,33 @@ class Player
 
   def grab_gravatar(&block)
     md5_email = NSData.MD5HexDigest(@email.downcase.dataUsingEncoding(NSUTF8StringEncoding))
-    url = "http://www.gravatar.com/avatar/#{md5_email}?s=100&d=monsterid"
+    url = "http://www.gravatar.com/avatar/#{md5_email}?s=60&d=monsterid"
     BW::HTTP.get(url) do |response|
       @gravatar = response.body.uiimage
+      block.call
+    end
+  end
+
+  def populate_invited_teams(season, &block)
+    BW::HTTP.get(BaseURL + "/player/#{@id}/season/#{season.id}/invited_teams/#{@api_key}") do |response|
+      invited_teams_hashes = BW::JSON.parse(response.body.to_str)
+      @invited_teams = invited_teams_hashes.map { |team_json| Team.from_hash(team_json, with_season:season) }
+      block.call
+    end
+  end
+
+  def accept_team_invitation(team, &block)
+    @accepted_invite = false
+    BW::HTTP.put(BaseURL + "/player/#{@id}/accept_team/#{team.id}/#{@api_key}") do |response|
+      @accepted_invite = true if response.ok?
+      block.call
+    end
+  end
+
+  def decline_team_invitation(team, &block)
+    @declined_invite = false
+    BW::HTTP.put(BaseURL + "/player/#{@id}/decline_team/#{team.id}/#{@api_key}") do |response|
+      @declined_invite = true if response.ok?
       block.call
     end
   end

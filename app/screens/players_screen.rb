@@ -8,17 +8,15 @@ class PlayersScreen < UITableViewController
     setup_table
   end
 
-  # navbar setup & actions
   def setup_navbar
     navigationItem.title = 'Players'
-    navigationItem.leftBarButtonItem = UIBarButtonItem.alloc.initWithTitle('Back', style:UIBarButtonItemStyleDone, target:self, action: :back_to_leagues)
+    navigationItem.leftBarButtonItem = UIBarButtonItem.alloc.initWithTitle('Leagues', style:UIBarButtonItemStylePlain, target:self, action: :back_to_leagues)
   end
 
   def back_to_leagues
     dismiss_modal
   end
 
-  # table setup
   def setup_table
     @reuse_id = 'player cell'
     tableView.backgroundColor = BackgroundColor
@@ -32,7 +30,6 @@ class PlayersScreen < UITableViewController
     end
   end
 
-  # table view data source & delegate methods
   def numberOfSectionsIn(table_view)
     1
   end
@@ -49,7 +46,6 @@ class PlayersScreen < UITableViewController
     100
   end
 
-  # cell generating methods
   def tableView(table_view, cellForRowAtIndexPath:index_path)
     cell = recycled_cell
     cell = new_cell if cell.nil?
