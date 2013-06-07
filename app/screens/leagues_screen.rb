@@ -71,6 +71,7 @@ class LeaguesScreen < ProMotion::SectionedTableScreen
   def games_tab
     screen = GamesScreen.new
     screen.league = @selected_league
+    screen.signedin_player = @signedin_player
     tab = UITabBarItem.alloc.initWithTitle('Games', image:'games.png'.uiimage, tag:0)
     screen.setTabBarItem(tab)
     nav = UINavigationController.new
