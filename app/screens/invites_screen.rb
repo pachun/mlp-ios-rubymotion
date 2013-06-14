@@ -17,10 +17,7 @@ class InvitesScreen < UITableViewController
 
   def setup_navbar
     navigationItem.title = 'Team Invitations'
-    navigationItem.leftBarButtonItem = UIBarButtonItem.alloc.initWithTitle('Leagues', style:UIBarButtonItemStylePlain, target:self, action: :back_to_leagues)
-    if !@league.current_season.teams_locked
-      navigationItem.rightBarButtonItem = UIBarButtonItem.alloc.initWithBarButtonSystemItem(UIBarButtonSystemItemAdd, target:self, action: :create_team)
-    end
+    navigationItem.rightBarButtonItem = UIBarButtonItem.alloc.initWithBarButtonSystemItem(UIBarButtonSystemItemAdd, target:self, action: :create_team)
   end
 
   def back_to_leagues
@@ -34,7 +31,11 @@ class InvitesScreen < UITableViewController
   end
 
   def create_team
-    navigationController << CreateTeamScreen.new(league: @league, creater: @signedin_player)
+    if !@league.current_season.teams_locked
+      navigationController << CreateTeamScreen.new(league: @league, creater: @signedin_player)
+    else
+      SVProgressHUD.showErrorWithStatus('The commissioner has locked the teams!')
+    end
   end
 
   def refresh_invited_teams

@@ -1,12 +1,10 @@
 class SignupScreen < ProMotion::Screen
   attr_accessor :player
 
-  # setup transition style when the view is constructed
   def on_load
     self.modalTransitionStyle = UIModalTransitionStyleFlipHorizontal
   end
 
-  # wire up tap events & keyboard forwarding
   def did_load
     @name_field.when(DoneWithKeyboard) { @email_field.becomeFirstResponder }
     @email_field.when(DoneWithKeyboard) { @password_field.becomeFirstResponder }

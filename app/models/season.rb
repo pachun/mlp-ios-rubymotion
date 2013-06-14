@@ -44,6 +44,13 @@ class Season
     end
   end
 
+  def lock_teams(player, &block)
+    BW::HTTP.put(BaseURL + "/season/#{@id}/lock_teams/#{player.api_key}") do |response|
+      @teams_locked = true if response.ok?
+      block.call
+    end
+  end
+
   private
 
   def valid_name?

@@ -15,19 +15,28 @@ class GamesScreen < UITableViewController
 
   def setup_navbar
     navigationItem.title = 'Games'
-    navigationItem.leftBarButtonItem = UIBarButtonItem.alloc.initWithTitle('Leagues', style:UIBarButtonItemStylePlain, target:self, action: :back_to_leagues)
     if @league.commissioner.id == @signedin_player.id
-      navigationItem.rightBarButtonItem = UIBarButtonItem.alloc.initWithBarButtonSystemItem(UIBarButtonSystemItemAdd, target:self, action: :load_create_game_form)
+      navigationItem.rightBarButtonItem = UIBarButtonItem.alloc.initWithBarButtonSystemItem(UIBarButtonSystemItemAdd, target:self, action: :check_if_teams_locked)
+    end
+  end
+
+  def check_if_teams_locked
+    if !@league.current_season.teams_locked
+      UIAlertView.alert("You have to lock teams before scheduling games. This is irreversible. Continue?", buttons: ['Yes, Lock Teams', 'No']) do |button|
+        if button == 'Yes, Lock Teams'
+          @league.current_season.lock_teams(@signedin_player) do
+            load_create_game_form
+          end
+        end
+      end
+    else
+      load_create_game_form
     end
   end
 
   def load_create_game_form
-    if @league.current_season.teams_locked
-      build_create_game_form
-      navigationController << CreateGameScreen.alloc.initWithForm(@create_game_form)
-    else
-      SVProgressHUD.showErrorWithStatus('Lock teams first!')
-    end
+    build_create_game_form
+    navigationController << CreateGameScreen.alloc.initWithForm(@create_game_form)
   end
 
   def create_game
@@ -73,7 +82,9 @@ class GamesScreen < UITableViewController
   end
 
   def tableView(table_view, didSelectRowAtIndexPath:index_path)
-    tableView.deselectRowAtIndexPath(index_path, animated:true)
+    game = @league.current_season.games[index_path.row]
+    present_modal(game.setup_screen)
+    # open game.setup_screen
   end
 
   def tableView(table_view, heightForRowAtIndexPath: index_path)

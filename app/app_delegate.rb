@@ -13,19 +13,31 @@ class App
 end
 
 BaseURL = 'http://localhost'
-
-# App's entry point
 class AppDelegate < ProMotion::Delegate
   def on_load(app, options)
+    customize_appearance
     open LoginScreen
   end
 end
 
-# style default UI components
-Teacup::Appearance.new do
-  style UINavigationBar,
-    tintColor: 0x0088cc.uicolor
+def customize_appearance
+  customize_nav_bar
+  customize_tab_bar
+  customize_nav_bar_buttons
+end
 
-  style UIBarButtonItem, when_contained_in: UINavigationBar,
-    tintColor: 0x0088cc.uicolor
+def customize_nav_bar
+  UINavigationBar.appearance.setBackgroundImage(UIImage.alloc.init, forBarMetrics:UIBarMetricsDefault)
+  UINavigationBar.appearance.setBackgroundColor(BlueColor)
+end
+
+def customize_tab_bar
+  UITabBar.appearance.setBackgroundImage('tabbar.png'.uiimage)
+end
+
+def customize_nav_bar_buttons
+  bar_button = UIImage.alloc.init.resizableImageWithCapInsets(UIEdgeInsetsMake(0, 5, 0, 5))
+  back_button = 'back.png'.uiimage.resizableImageWithCapInsets(UIEdgeInsetsMake(0, 14, 0, 5))
+  UIBarButtonItem.appearance.setBackgroundImage(bar_button, forState:UIControlStateNormal, barMetrics:UIBarMetricsDefault)
+  UIBarButtonItem.appearance.setBackButtonBackgroundImage(back_button, forState:UIControlStateNormal, barMetrics:UIBarMetricsDefault)
 end

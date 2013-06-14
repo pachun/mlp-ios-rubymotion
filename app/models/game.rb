@@ -1,7 +1,13 @@
 class Game
   attr_accessor :id, :season, :scheduled_at, :scheduled_time, :winning_team_id, :was_played,
     :home_team, :away_team, :home_team_players, :away_team_players
-  attr_accessor :error, :created
+  attr_accessor :error, :created, :setup_screen
+
+  def initialize
+    setup_screen = GameSetupScreen.new
+    setup_screen.game = self
+    @setup_screen = UINavigationController.alloc.initWithRootViewController(setup_screen)
+  end
 
   def self.from_hash(game_hash, with_season: season)
     game = Game.new

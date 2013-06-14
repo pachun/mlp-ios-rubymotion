@@ -6,9 +6,11 @@ class LeaguesScreen < ProMotion::SectionedTableScreen
   def on_load
     setup_navbar
     @table_data = [{cells: []}]
+    self.modalTransitionStyle = UIModalTransitionStyleFlipHorizontal
   end
 
   def will_appear
+    view.backgroundColor = BackgroundColor
     populate_leagues
     populate_invites
   end
@@ -25,7 +27,7 @@ class LeaguesScreen < ProMotion::SectionedTableScreen
   private
 
   def setup_navbar
-    set_nav_bar_left_button('Sign Out', action: :logout)
+    set_nav_bar_left_button(nil, action: :logout, system_icon: UIBarButtonSystemItemReply)
     set_nav_bar_right_button(nil, action: :create_league, system_icon: UIBarButtonSystemItemAdd)
   end
 
@@ -42,7 +44,7 @@ class LeaguesScreen < ProMotion::SectionedTableScreen
 
   def open_league_overview
     tab_bar = UITabBarController.new
-    tab_bar.viewControllers = [players_tab, teams_tab, games_tab, invites_tab]
+    tab_bar.viewControllers = [players_tab, teams_tab, games_tab, invites_tab, more_tab]
     present_modal(tab_bar)
   end
 
@@ -52,9 +54,7 @@ class LeaguesScreen < ProMotion::SectionedTableScreen
     screen.signedin_player = @signedin_player
     tab = UITabBarItem.alloc.initWithTitle('Players', image:'players.png'.uiimage, tag:0)
     screen.setTabBarItem(tab)
-    nav = UINavigationController.new
-    nav << screen
-    nav
+    UINavigationController.new << screen
   end
 
   def teams_tab
@@ -63,9 +63,7 @@ class LeaguesScreen < ProMotion::SectionedTableScreen
     screen.signedin_player = @signedin_player
     tab = UITabBarItem.alloc.initWithTitle('Teams', image:'teams.png'.uiimage, tag:0)
     screen.setTabBarItem(tab)
-    nav = UINavigationController.new
-    nav << screen
-    nav
+    UINavigationController.new << screen
   end
 
   def games_tab
@@ -74,9 +72,7 @@ class LeaguesScreen < ProMotion::SectionedTableScreen
     screen.signedin_player = @signedin_player
     tab = UITabBarItem.alloc.initWithTitle('Games', image:'games.png'.uiimage, tag:0)
     screen.setTabBarItem(tab)
-    nav = UINavigationController.new
-    nav << screen
-    nav
+    UINavigationController.new << screen
   end
 
   def invites_tab
@@ -85,9 +81,14 @@ class LeaguesScreen < ProMotion::SectionedTableScreen
     screen.signedin_player = @signedin_player
     tab = UITabBarItem.alloc.initWithTitle('Invites', image:'invites.png'.uiimage, tag:0)
     screen.setTabBarItem(tab)
-    nav = UINavigationController.new
-    nav << screen
-    nav
+    UINavigationController.new << screen
+  end
+
+  def more_tab
+    screen = LogoutScreen.new
+    tab = UITabBarItem.alloc.initWithTitle('More', image:'more.png'.uiimage, tag:0)
+    screen.setTabBarItem(tab)
+    UINavigationController.new << screen
   end
 
   def populate_leagues

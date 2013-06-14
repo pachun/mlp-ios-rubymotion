@@ -10,7 +10,6 @@ class PlayersScreen < UITableViewController
 
   def setup_navbar
     navigationItem.title = 'Players'
-    navigationItem.leftBarButtonItem = UIBarButtonItem.alloc.initWithTitle('Leagues', style:UIBarButtonItemStylePlain, target:self, action: :back_to_leagues)
   end
 
   def back_to_leagues
@@ -39,7 +38,6 @@ class PlayersScreen < UITableViewController
   end
 
   def tableView(table_view, didSelectRowAtIndexPath:index_path)
-    tableView.deselectRowAtIndexPath(index_path, animated:true)
   end
 
   def tableView(table_view, heightForRowAtIndexPath: index_path)
@@ -69,7 +67,7 @@ class PlayersScreen < UITableViewController
 
   def new_cell
     cell = UITableViewCell.alloc.initWithStyle(UITableViewCellStyleDefault, reuseIdentifier:@reuse_id)
-    cell.selectionStyle = UITableViewCellSelectionStyleGray
+    cell.selectionStyle = UITableViewCellSelectionStyleNone
     cell
   end
 end

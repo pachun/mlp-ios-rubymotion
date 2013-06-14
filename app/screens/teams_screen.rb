@@ -12,7 +12,6 @@ class TeamsScreen < UITableViewController
 
   def setup_navbar
     navigationItem.title = 'Teams'
-    navigationItem.leftBarButtonItem = UIBarButtonItem.alloc.initWithTitle('Leagues', style:UIBarButtonItemStylePlain, target:self, action: :back_to_leagues)
   end
 
   def back_to_leagues

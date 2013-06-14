@@ -24,28 +24,25 @@ Teacup::Stylesheet.new(:team_cell_sheet) do
   style :player_name,
     color: TrimColor,
     backgroundColor: :clear.uicolor,
-    font: 'HelveticaNeue'.uifont(12),
+    font: 'HelveticaNeue'.uifont(14),
     textAlignment: :center.uialignment
 
   style :player1_name, extends: :player_name,
     constraints: [
-      constrain_below(:team_name),
-      constrain(:right).equals(:superview, :right).minus(5),
-      constrain(:left).equals(:superview, :left).plus(100),
+      constrain(:bottom).equals(:superview, :bottom).minus(5),
+      constrain(:left).equals(:superview, :left).plus(5),
     ]
 
   style :player2_name, extends: :player_name,
     constraints: [
-      constrain_below(:player1_name),
-      constrain(:right).equals(:superview, :right).minus(5),
-      constrain(:left).equals(:superview, :left).plus(100),
+      constrain_above(:player1_name),
+      constrain(:left).equals(:superview, :left).plus(5),
     ]
 
   style :player3_name, extends: :player_name,
     constraints: [
-      constrain_below(:player2_name),
-      constrain(:right).equals(:superview, :right).minus(5),
-      constrain(:left).equals(:superview, :left).plus(100),
+      constrain_above(:player2_name),
+      constrain(:left).equals(:superview, :left).plus(5),
     ]
 
   style :team_stat,
@@ -56,16 +53,14 @@ Teacup::Stylesheet.new(:team_cell_sheet) do
   style :wins_label, extends: :team_stat,
     color: RedColor,
     constraints: [
-      constrain_below(:team_name, 5),
-      constrain(:left).equals(:superview, :left).plus(5),
-      constrain(:right).equals(:superview, :right).minus(110),
+      constrain_above(:losses_label),
+      constrain(:right).equals(:superview, :right).minus(5),
     ]
 
   style :losses_label, extends: :team_stat,
     color: BlueColor,
     constraints: [
-      constrain_below(:wins_label),
-      constrain(:left).equals(:superview, :left).plus(5),
-      constrain(:right).equals(:superview, :right).minus(110),
+      constrain(:bottom).equals(:superview, :bottom).minus(5),
+      constrain(:right).equals(:superview, :right).minus(5),
     ]
 end
