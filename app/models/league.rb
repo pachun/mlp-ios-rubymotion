@@ -62,15 +62,15 @@ class League
   end
 
   def get_player_gravatars(&block)
-    # @players.each do |player|
-    #   player.grab_gravatar do
-    #     block.call if all_gravatars_in
-    #   end
-    # end
     @players.each do |player|
-      player.gravatar = 'me.jpeg'.uiimage
+      player.grab_gravatar do
+        block.call if all_gravatars_in
+      end
     end
-    block.call
+    # @players.each do |player|
+    #   player.gravatar = 'me.jpeg'.uiimage
+    # end
+    # block.call
   end
 
   def all_gravatars_in

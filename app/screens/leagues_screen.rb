@@ -44,7 +44,7 @@ class LeaguesScreen < ProMotion::SectionedTableScreen
 
   def open_league_overview
     tab_bar = UITabBarController.new
-    tab_bar.viewControllers = [players_tab, teams_tab, games_tab, invites_tab, more_tab]
+    tab_bar.viewControllers = [players_tab, teams_tab, games_tab, invites_tab, options_tab]
     present_modal(tab_bar)
   end
 
@@ -84,9 +84,9 @@ class LeaguesScreen < ProMotion::SectionedTableScreen
     UINavigationController.new << screen
   end
 
-  def more_tab
-    screen = LogoutScreen.new
-    tab = UITabBarItem.alloc.initWithTitle('More', image:'more.png'.uiimage, tag:0)
+  def options_tab
+    screen = OptionsScreen.new
+    tab = UITabBarItem.alloc.initWithTitle('Options', image:'options.png'.uiimage, tag:0)
     screen.setTabBarItem(tab)
     UINavigationController.new << screen
   end

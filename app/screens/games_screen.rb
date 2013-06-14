@@ -82,9 +82,13 @@ class GamesScreen < UITableViewController
   end
 
   def tableView(table_view, didSelectRowAtIndexPath:index_path)
-    game = @league.current_season.games[index_path.row]
-    present_modal(game.setup_screen)
-    # open game.setup_screen
+    if @league.commissioner.id == @signedin_player.id
+      game = @league.current_season.games[index_path.row]
+      game.ref = @signedin_player
+      present_modal(game.setup_screen)
+    else
+      # show game overview
+    end
   end
 
   def tableView(table_view, heightForRowAtIndexPath: index_path)
