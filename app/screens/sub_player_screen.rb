@@ -3,10 +3,6 @@ class SubstitutePlayerScreen < ProMotion::TableScreen
 
   title 'Subs'
 
-  def on_load
-    puts "in here with league = #{@league}, scorer = #{@scorer}, & ommitted player ids = #{@ommitted_player_ids.inspect}"
-  end
-
   def will_appear
     update_table_data
   end

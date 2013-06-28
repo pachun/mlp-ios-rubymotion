@@ -6,7 +6,6 @@ class Game
   def initialize
     @home_team_players = []
     @away_team_players = []
-    @navigation_stack = GameNavigationStack.new(self)
   end
 
   def self.from_hash(game_hash, with_season: season)
@@ -32,6 +31,16 @@ class Game
     else
       block.call
     end
+  end
+
+  def setup_navigation_stack
+    set_default_players
+    @navigation_stack = GameNavigationStack.new(self)
+  end
+
+  def set_default_players
+    @home_team_players = @home_team.players
+    @away_team_players = @away_team.players
   end
 
   private
