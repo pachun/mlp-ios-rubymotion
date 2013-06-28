@@ -1,12 +1,12 @@
 class Game
   attr_accessor :id, :season, :scheduled_at, :scheduled_time, :winning_team_id, :was_played,
-    :home_team, :away_team, :home_team_players, :away_team_players
-  attr_accessor :error, :created, :setup_screen, :ref
+    :home_team, :away_team, :home_team_players, :away_team_players, :ref
+  attr_accessor :error, :created, :navigation_stack
 
   def initialize
     @home_team_players = []
     @away_team_players = []
-    init_setup_game_screen
+    @navigation_stack = GameNavigationStack.new(self)
   end
 
   def self.from_hash(game_hash, with_season: season)
@@ -88,11 +88,5 @@ class Game
       end
     end
     block.call
-  end
-
-  def init_setup_game_screen
-    setup_screen = GameSetupScreen.new
-    setup_screen.game = self
-    @setup_screen = UINavigationController.alloc.initWithRootViewController(setup_screen)
   end
 end

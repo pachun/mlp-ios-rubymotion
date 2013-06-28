@@ -1,5 +1,5 @@
 class GameSetupScreen < ProMotion::Screen
-  attr_accessor :game, :subing_team
+  attr_accessor :game, :subing_team, :subing_player
 
   def viewDidLoad
     super
@@ -19,6 +19,9 @@ class GameSetupScreen < ProMotion::Screen
 
   def on_return(args = {})
     puts "got #{args.inspect}"
+    if @subing_team == :home_team
+      puts "subing #{@game.home_team_players[@subing_player].name} for #{@args[:player].name}"
+    end
   end
 
   private
@@ -31,7 +34,8 @@ class GameSetupScreen < ProMotion::Screen
 
   def select(team, sub_for:player_position)
     @subing_team = team
-    ommitted_ids = game.home_team.players.map { |p| p.id } + game.away_team.players.map { |p| p.id }
+    @subing_player = player_position
+    ommitted_ids = game.home_team_players.map { |p| p.id } + game.away_team_players.map { |p| p.id }
     open SubstitutePlayerScreen.new(league: @game.season.league, scorer: @game.ref, ommitted_player_ids: ommitted_ids)
   end
 end
