@@ -29,7 +29,7 @@ Teacup::Stylesheet.new(:team_cell_sheet) do
 
   style :player1_name, extends: :player_name,
     constraints: [
-      constrain(:bottom).equals(:superview, :bottom).minus(5),
+      constrain(:bottom).equals(:superview, :bottom).minus(2),
       constrain(:left).equals(:superview, :left).plus(5),
     ]
 

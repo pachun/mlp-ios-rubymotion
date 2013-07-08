@@ -37,7 +37,9 @@ end
 
 def customize_nav_bar_buttons
   bar_button = UIImage.alloc.init.resizableImageWithCapInsets(UIEdgeInsetsMake(0, 5, 0, 5))
-  back_button = 'back.png'.uiimage.resizableImageWithCapInsets(UIEdgeInsetsMake(0, 14, 0, 5))
+  back_button_portrait = 'back.png'.uiimage.resizableImageWithCapInsets(UIEdgeInsetsMake(0, 14, 0, 5))
+  back_button_landscape = 'back.png'.uiimage.resizableImageWithCapInsets(UIEdgeInsetsMake(10, 14, 10, 5))
   UIBarButtonItem.appearance.setBackgroundImage(bar_button, forState:UIControlStateNormal, barMetrics:UIBarMetricsDefault)
-  UIBarButtonItem.appearance.setBackButtonBackgroundImage(back_button, forState:UIControlStateNormal, barMetrics:UIBarMetricsDefault)
+  UIBarButtonItem.appearance.setBackButtonBackgroundImage(back_button_portrait, forState:UIControlStateNormal, barMetrics:UIBarMetricsDefault)
+  UIBarButtonItem.appearance.setBackButtonBackgroundImage(back_button_landscape, forState:UIControlStateNormal, barMetrics:UIBarMetricsLandscapePhone)
 end

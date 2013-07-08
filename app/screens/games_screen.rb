@@ -84,9 +84,8 @@ class GamesScreen < UITableViewController
   def tableView(table_view, didSelectRowAtIndexPath:index_path)
     if @league.commissioner.id == @signedin_player.id
       game = @league.current_season.games[index_path.row]
-      game.ref = @signedin_player
-      game.setup_navigation_stack
-      present_modal(game.navigation_stack.nav)
+      game.setup_with_ref(@signedin_player)
+      present_modal game.navigation_stack.nav
     else
       # show game overview
     end

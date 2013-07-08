@@ -37,5 +37,7 @@ class GameSetupScreen < ProMotion::Screen
     @home_starts_button.setTitleColor(:white.uicolor, forState:UIControlStateNormal)
     @away_starts_button.setTitle('Shoot First', forState:UIControlStateNormal)
     @away_starts_button.setTitleColor(:white.uicolor, forState:UIControlStateNormal)
+    @home_starts_button.when_tapped { @game.navigation_stack.begin_with(:home_team) }
+    @away_starts_button.when_tapped { @game.navigation_stack.begin_with(:away_team) }
   end
 end

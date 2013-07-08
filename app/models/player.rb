@@ -3,7 +3,8 @@ class Player
     :leagues, :invited_leagues, :gravatar, :invited_teams
 
   attr_accessor :confirmed_password, :error, :saved,
-    :accepted_invite, :declined_invite
+    :accepted_invite, :declined_invite, :big_gravatar,
+    :home_cups_hit, :away_cups_hit
 
   def self.from_hash(player)
     new_player = Player.new
@@ -88,6 +89,15 @@ class Player
     url = "http://www.gravatar.com/avatar/#{md5_email}?s=60&d=monsterid"
     BW::HTTP.get(url) do |response|
       @gravatar = response.body.uiimage
+      block.call
+    end
+  end
+
+  def grab_big_gravatar(&block)
+    md5_email = NSData.MD5HexDigest(@email.downcase.dataUsingEncoding(NSUTF8StringEncoding))
+    url = "http://www.gravatar.com/avatar/#{md5_email}?s=120&d=monsterid"
+    BW::HTTP.get(url) do |response|
+      @big_gravatar = response.body.uiimage
       block.call
     end
   end

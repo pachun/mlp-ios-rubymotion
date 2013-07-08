@@ -64,7 +64,7 @@ class League
   def get_player_gravatars(&block)
     @players.each do |player|
       player.grab_gravatar do
-        block.call if all_gravatars_in
+        block.call if all_gravatars_in?
       end
     end
     # @players.each do |player|
@@ -73,7 +73,7 @@ class League
     # block.call
   end
 
-  def all_gravatars_in
+  def all_gravatars_in?
     true if @players.count == @players.select{ |p| p.gravatar }.count
   end
 

@@ -8,9 +8,17 @@ class GameSetupScreen < ProMotion::Screen
 
   def viewDidLoad
     super
-    navigationItem.title = "#{@game.home_team.name} vs #{@game.away_team.name}"
+    navigationItem.title = "Setup"
     navigationItem.rightBarButtonItem = UIBarButtonItem.alloc.initWithBarButtonSystemItem(UIBarButtonSystemItemTrash, target:self, action: :confirm_quit)
     allow_player_substitutions
+  end
+
+  def setup_undo_button(nav_stack)
+    undo_button = layout(UIButton.custom, :undo_button) do end
+    nav_stack.undo_button = undo_button.tap do |button|
+      button.setTitle('Undo', forState:UIControlStateNormal)
+      button.setTitleColor(:black.uicolor, forState:UIControlStateNormal)
+    end
   end
 
   def allow_player_substitutions

@@ -1,9 +1,13 @@
 class Game
   attr_accessor :id, :season, :scheduled_at, :scheduled_time, :winning_team_id, :was_played,
-    :home_team, :away_team, :home_team_players, :away_team_players, :ref
-  attr_accessor :error, :created, :navigation_stack
+    :home_team, :away_team, :home_team_players, :away_team_players, :ref, :rounds, :turns
+  attr_accessor :error, :created, :navigation_stack,
+    :home_team_hits, :away_team_hits, :current_turn
 
   def initialize
+    @rounds = []
+    @home_team_hits = 0
+    @away_team_hits = 0
     @home_team_players = []
     @away_team_players = []
   end
@@ -33,17 +37,102 @@ class Game
     end
   end
 
-  def setup_navigation_stack
-    set_default_players
+  def setup_with_ref(ref)
+    @ref = ref
+    set_default_team_players
     @navigation_stack = GameNavigationStack.new(self)
   end
 
-  def set_default_players
+  def set_default_team_players
     @home_team_players = @home_team.players
     @away_team_players = @away_team.players
   end
 
+  def grab_big_gravatars(&block)
+    if all_big_gravatars_in?
+      block.call
+      return
+    end
+    grab_home_teams_big_gravatars(&block)
+    grab_away_teams_big_gravatars(&block)
+  end
+
+  def start_with(team)
+    @shooting_order = []
+    @shooting_order << (team == :home_team ? @home_team : @away_team)
+    @shooting_order << (team == :home_team ? @away_team : @home_team)
+  end
+
+  def next_turn
+    if @rounds.last.nil? || @rounds.last.completed?
+      @rounds << Round.new(self, @rounds.count, @shooting_order)
+      @rounds.last.first_turn
+    else
+      @rounds.last.second_turn
+    end
+  end
+
+  def undo_last_shot
+    last_shot = @current_turn.shots.pop
+    unless last_shot.cup_number == 0
+      if @current_turn.team.id == @home_team.id
+        @home_team_hits -= 1
+      else
+        @away_team_hits -= 1
+      end
+    end
+  end
+
+  def cups_hit_by(team)
+    if team.id == @home_team.id
+      @home_team_hits
+    else
+      @away_team_hits
+    end
+  end
+
+  def increment_hits_for(team)
+    if team.id == @home_team.id
+      @home_team_hits += 1
+      @home_team_hits
+    else
+      @away_team_hits += 1
+      @away_team_hits
+    end
+    1
+  end
+
+  def over?
+    @home_team_hits == 10 || @away_team_hits == 10
+  end
+
   private
+
+  def grab_home_teams_big_gravatars(&block)
+    @home_team_players.each do |player|
+      player.grab_big_gravatar do
+        block.call if all_big_gravatars_in?
+      end
+    end
+  end
+
+  def grab_away_teams_big_gravatars(&block)
+    @away_team_players.each do |player|
+      player.grab_big_gravatar do
+        block.call if all_big_gravatars_in?
+      end
+    end
+  end
+
+  def all_big_gravatars_in?
+    @home_team_players.each do |player|
+      return false if player.big_gravatar.nil?
+    end
+    @away_team_players.each do |player|
+      return false if player.big_gravatar.nil?
+    end
+    true
+  end
 
   def valid_schedule_time?
     if @scheduled_time.nil?
