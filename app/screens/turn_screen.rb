@@ -1,9 +1,36 @@
 class TurnScreen < PM::Screen
-  attr_accessor :nav_stack, :turn, :num_shots, :undo_button
+  attr_accessor :nav_stack, :turn, :num_shots, :undo_button, :skipped
 
   def viewDidLoad
     super
     navigationItem.title = "Round #{@turn.round.number+1}"
+    if @skipped
+      setup_skipped_turn
+    else
+      setup_playable_turn
+    end
+  end
+
+  def setup_skipped_turn
+    @turn.stub_untaken_shots
+    @turn.finish!
+    (0..2).each do |pos|
+      darken_panel(pos)
+      no_shot_for_panel(pos)
+      @nav_stack.undo_button_locations << pos
+    end
+  end
+
+  def viewDidAppear(animated)
+    super(animated)
+    if @skipped
+      UIAlertView.alert "Balls Back!" do
+        @nav_stack.push_next_turn_screen
+      end
+    end
+  end
+
+  def setup_playable_turn
     setup_hit_buttons
     setup_miss_buttons
     setup_undo_button
@@ -82,7 +109,7 @@ class TurnScreen < PM::Screen
     remove_back_button
     check_for_end_of_game
     reposition_undo_button
-    check_for_next_turn
+    check_for_next_turn unless @turn.round.game.over?
   end
 
   def remove_back_button
@@ -91,7 +118,19 @@ class TurnScreen < PM::Screen
 
   def check_for_end_of_game
     if @turn.round.game.over?
-      @turn.stub_untaken_shots
+      verify_end_of_game
+    end
+  end
+
+  def verify_end_of_game
+    UIAlertView.alert("Game over?", buttons: ["Yes", "No! Undo"]) do |button|
+      if button == 'Yes'
+        @turn.stub_untaken_shots
+        @turn.round.game.report!
+        @nav_stack.end_game
+      else
+        @nav_stack.undo_tapped
+      end
     end
   end
 
@@ -128,6 +167,11 @@ class TurnScreen < PM::Screen
 
   def miss_for_panel(number)
     @hit_cup_labels[number].text = '-'
+    @hit_cup_labels[number].hidden = false
+  end
+
+  def no_shot_for_panel(number)
+    @hit_cup_labels[number].text = 'no shot'
     @hit_cup_labels[number].hidden = false
   end
 end

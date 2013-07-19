@@ -12,6 +12,10 @@ class Game
     @away_team_players = []
   end
 
+  def report!
+    puts "Reporting game!!"
+  end
+
   def self.from_hash(game_hash, with_season: season)
     game = Game.new
     game.id = game_hash[:id]
@@ -103,7 +107,7 @@ class Game
   end
 
   def over?
-    @home_team_hits == 10 || @away_team_hits == 10
+    @home_team_hits == 4 || @away_team_hits == 4
   end
 
   private

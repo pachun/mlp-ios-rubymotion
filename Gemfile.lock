@@ -41,6 +41,7 @@ GEM
     motion-cocoapods (1.3.2)
       cocoapods (>= 0.17.0)
     motion-require (0.0.6)
+    motion-testflight (1.5)
     multi_json (1.7.3)
     multipart-post (1.2.0)
     netrc (0.7.7)
@@ -72,6 +73,7 @@ DEPENDENCIES
   formotion
   geomotion
   motion-cocoapods
+  motion-testflight
   sugarcube
   sweettea
   teacup
