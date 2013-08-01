@@ -1,16 +1,15 @@
 class Season
-  attr_accessor :id, :created_at, :name, :teams_locked, :league_id,
+  attr_accessor :id, :created_at, :name, :teams_locked,
     :league, :teams, :games
 
   attr_accessor :error, :created
 
   def self.from_hash(season_hash, with_league:league)
     season = Season.new
+    season.league = league
     season.id = season_hash[:id] if season_hash.has_key?(:id)
     season.name = season_hash[:name] if season_hash.has_key?(:name)
     season.teams_locked = season_hash[:teams_locked] if season_hash.has_key?(:teams_locked)
-    season.league = league
-    season.league_id = season_hash[:league_id] if season_hash.has_key?(:league_id)
     season.created_at = season_hash[:created_at] if season_hash.has_key?(:created_at)
     season
   end
@@ -25,7 +24,11 @@ class Season
   end
 
   def team_with_id(id)
-    @teams.select { |team| team.id == id }.first
+    @teams.select{|team| team.id == id}.first
+  end
+
+  def player_with_id(id)
+    @league.players.select{|player| player.id == id}.first
   end
 
   def populate_teams(player, &block)

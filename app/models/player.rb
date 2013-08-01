@@ -1,6 +1,8 @@
 class Player
   attr_accessor :id, :name, :email, :password, :api_key, :registered_at,
-    :leagues, :invited_leagues, :gravatar, :invited_teams
+    :leagues, :invited_leagues, :gravatar, :invited_teams, :league_id
+
+  attr_accessor :opp, :ohp, :lpp, :lhp, :spp, :shp, :olc, :llc, :slc
 
   attr_accessor :confirmed_password, :error, :saved,
     :accepted_invite, :declined_invite, :big_gravatar,
@@ -12,7 +14,21 @@ class Player
     new_player.name = player[:name] if player.has_key?(:name)
     new_player.email = player[:email] if player.has_key?(:email)
     new_player.api_key = player[:api_key] if player.has_key?(:api_key)
+    # new_player.league_id = player [:league_id] if player.has_key?(:league_id)
     new_player.registered_at = player[:registered_at] if player.has_key?(:registered_at)
+
+    new_player.opp = player[:opp] if player.has_key?(:opp)
+    new_player.ohp = player[:ohp] if player.has_key?(:ohp)
+
+    new_player.lpp = player[:lpp] if player.has_key?(:lpp)
+    new_player.lhp = player[:lhp] if player.has_key?(:lhp)
+
+    new_player.spp = player[:spp] if player.has_key?(:spp)
+    new_player.shp = player[:shp] if player.has_key?(:shp)
+
+    new_player.olc = player[:olc] if player.has_key?(:olc)
+    new_player.llc = player[:llc] if player.has_key?(:llc)
+    new_player.slc = player[:slc] if player.has_key?(:slc)
     new_player
   end
 

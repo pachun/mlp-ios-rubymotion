@@ -2,7 +2,7 @@ source 'https://rubygems.org'
 
 gem 'teacup'
 gem 'sugarcube'
-gem 'sweettea'
+gem 'sweettea', :git => 'https://github.com/colinta/sweettea'
 gem 'bubble-wrap'
 gem 'geomotion'
 gem 'ProMotion'

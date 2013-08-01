@@ -1,0 +1,16 @@
+quit
+removeFromSuperview
+superview.backgroundColor = :clear.uicolor
+subviews
+backgroundColor = :clear.uicolor
+backgroundColor = :white.uicolor
+updateStyles!
+update_styles!
+update_style!
+quit
+quit
+quit
+quit
+quit
+quit
+quit

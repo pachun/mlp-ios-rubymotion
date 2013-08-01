@@ -11,8 +11,12 @@ class LeaguesScreen < ProMotion::SectionedTableScreen
 
   def will_appear
     view.backgroundColor = BackgroundColor
-    populate_leagues
-    populate_invites
+    SVProgressHUD.showWithMaskType SVProgressHUDMaskTypeGradient
+    populate_leagues do
+      populate_invites do
+        SVProgressHUD.dismiss
+      end
+    end
   end
 
   def tapped(touched)
@@ -91,15 +95,16 @@ class LeaguesScreen < ProMotion::SectionedTableScreen
     UINavigationController.new << screen
   end
 
-  def populate_leagues
+  def populate_leagues(&block)
     @signedin_player.populate_leagues do
       cells = @signedin_player.leagues.map { |league| cell_for(:league, league) }
       @table_data.first[:cells] = cells
       update_table_data
+      block.call
     end
   end
 
-  def populate_invites
+  def populate_invites(&block)
     @signedin_player.populate_invited_leagues do
       if @signedin_player.invited_leagues.count > 0
         cells = @signedin_player.invited_leagues.map { |league| cell_for(:invite, league) }
@@ -108,6 +113,7 @@ class LeaguesScreen < ProMotion::SectionedTableScreen
         @table_data.delete_at(1) if !@table_data[1].nil?
       end
       update_table_data
+      block.call
     end
   end
 

@@ -28,7 +28,7 @@ class GameNavigationStack
   end
 
   def end_game
-    # current_turn.team = winner
+    @nav.viewControllers.last.dismiss_modal
   end
 
   def about_to_start_first_turn?

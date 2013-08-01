@@ -1,11 +1,30 @@
 class Turn
-  attr_accessor :round, :team, :id, :started_at, :playable, :finished_at, :shots
+  attr_accessor :round, :team, :id, :started_at, :finished_at, :shots
+
+  def self.from_hash(turn, in_round:round)
+    new_turn = Turn.new(round, round.game.season.team_with_id(turn['team_id']))
+    new_turn.id = turn['id']
+    new_turn.started_at = turn['started_at']
+    turn['shots'].each do |shot|
+      new_turn.shots << Shot.from_hash(shot, in_turn:new_turn)
+    end
+    new_turn
+  end
+
+  def jsonify
+    @started_at = NSDate.new if @started_at.nil?
+    json = {
+      :started_at => @started_at.to_s,
+      :team_id => @team.id,
+    }
+    json[:shots] = @shots.map { |s| s.jsonify }
+    json
+  end
 
   def initialize(round, team)
     @shots = []
     @team = team
     @round = round
-    @playable = true
   end
 
   def add_hit_for(player_number)
@@ -41,5 +60,19 @@ class Turn
 
   def finish!
     @finished_at = NSDate.new
+  end
+
+  def shot_for(player)
+    @shots.select{ |shot|
+      shot.player.id == player.id }.first
+  end
+
+  def cup_hit_by(player)
+    shot = shot_for(player)
+    if shot.status == 'shot'
+      shot.cup_number.to_s
+    else
+      "no shot"
+    end
   end
 end

@@ -53,8 +53,8 @@ class PlayersScreen < UITableViewController
         subview(UIImageView, :player_image, :image => player.gravatar)
         subview(UILabel, :player_name, :text => player.name)
         subview(UILabel, :player_team, :text => 'Free Agent') # fix after teams invites setup
-        subview(UILabel, :player_hit_percentage, :text => '0.48 hit percentage')
-        subview(UILabel, :player_point_percentage, :text => '0.62 point percentage')
+        subview(UILabel, :player_hit_percentage, :text => "#{player.shp} hit percentage")
+        subview(UILabel, :player_point_percentage, :text => "#{player.spp} point percentage")
       end
     end
     cell.contentView.apply_constraints

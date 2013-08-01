@@ -2,9 +2,31 @@ class Game
   attr_accessor :id, :season, :scheduled_at, :scheduled_time, :winning_team_id, :was_played,
     :home_team, :away_team, :home_team_players, :away_team_players, :ref, :rounds, :turns
   attr_accessor :error, :created, :navigation_stack,
-    :home_team_hits, :away_team_hits, :current_turn
+    :home_team_hits, :away_team_hits, :current_turn, :has_round_details
+
+  def jsonify
+    json = {
+      :winning_team_id => @winning_team_id,
+      :ref_id => @ref.id,
+      :home_team_id => @home_team.id,
+      :away_team_id => @away_team.id,
+      :htp1_id => @home_team_players[0].id,
+      :htp2_id => @home_team_players[1].id,
+      :atp1_id => @away_team_players[0].id,
+      :atp2_id => @away_team_players[1].id,
+      :rounds => @rounds.map { |r| r.jsonify },
+      :is_playoff_game => false,
+      :bracket_round => 0,
+    }
+    if @season.league.players_per_team == 3
+      json[:htp3_id] = @home_team_players[2].id
+      json[:atp3_id] = @away_team_players[2].id
+    end
+    json
+  end
 
   def initialize
+    @has_round_details = false
     @rounds = []
     @home_team_hits = 0
     @away_team_hits = 0
@@ -13,7 +35,9 @@ class Game
   end
 
   def report!
-    puts "Reporting game!!"
+    @winning_team_id = @home_team_hits > @away_team_hits ? @home_team.id : @away_team.id
+    report_score
+    @navigation_stack.end_game
   end
 
   def self.from_hash(game_hash, with_season: season)
@@ -26,8 +50,10 @@ class Game
     game.winning_team_id = game_hash[:winning_team_id]
     game.home_team = season.team_with_id(game_hash[:home_team_id])
     game.away_team = season.team_with_id(game_hash[:away_team_id])
-    if game.was_played
-      # set home/away team players here
+    if game_hash['winning_team_id']
+      game.winning_team_id = game_hash['winning_team_id']
+      game.home_team_players = (1..3).map{ |pos| season.league.player_with_id(game_hash[:"htp#{pos}_id"]) }
+      game.away_team_players = (1..3).map{ |pos| season.league.player_with_id(game_hash[:"atp#{pos}_id"]) }
     end
     game
   end
@@ -103,11 +129,26 @@ class Game
       @away_team_hits += 1
       @away_team_hits
     end
-    1
   end
 
   def over?
-    @home_team_hits == 4 || @away_team_hits == 4
+    @home_team_hits == 5 || @away_team_hits == 5
+  end
+
+  def populate_details(signedin_player, &block)
+    if @has_round_details
+      block.call
+      return
+    end
+    BW::HTTP.get(BaseURL + "/game/#{@id}/#{signedin_player.api_key}") do |response|
+      @rounds = []
+      rounds = BW::JSON.parse(response.body.to_str)
+      rounds.each do |round|
+        @rounds << Round.from_hash(round, in_game:self)
+      end
+      @has_round_details = true
+      block.call
+    end
   end
 
   private
@@ -171,6 +212,12 @@ class Game
       false
     else
       true
+    end
+  end
+
+  def report_score(&block)
+    BW::HTTP.put(BaseURL + "/game/#{@id}/#{@ref.api_key}", {payload: jsonify}) do |response|
+      block.call if response.ok?
     end
   end
 

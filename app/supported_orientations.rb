@@ -1,6 +1,6 @@
 class UINavigationController < UIViewController
   def supportedInterfaceOrientations
-    if viewControllers.last.class == GameSetupScreen || viewControllers.last.class == TurnScreen
+    if viewControllers.last.class == GameSetupScreen || viewControllers.last.class == TurnScreen || viewControllers.last.class == GameOverviewScreen
       UIInterfaceOrientationMaskLandscape
     else
       UIInterfaceOrientationMaskPortrait
