@@ -38,6 +38,10 @@ class PlayersScreen < UITableViewController
   end
 
   def tableView(table_view, didSelectRowAtIndexPath:index_path)
+    player = @league.players[index_path.row]
+    player_vc = PlayerDetailsScreen.new
+    player_vc.player = player
+    navigationController << player_vc
   end
 
   def tableView(table_view, heightForRowAtIndexPath: index_path)
