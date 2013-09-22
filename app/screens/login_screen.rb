@@ -2,6 +2,8 @@ class LoginScreen < ProMotion::Screen
   attr_accessor :player
 
   def did_load
+    @email_field.text = 'hello@nickpachulski.com'
+    @password_field.text = 'password'
     @email_field.when(DoneWithKeyboard) { @password_field.becomeFirstResponder }
     @password_field.when(DoneWithKeyboard) { drop_keyboard }
     @signup_button.when_tapped { flip_to_signup_screen }
