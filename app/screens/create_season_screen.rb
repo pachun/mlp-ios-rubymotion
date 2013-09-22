@@ -6,7 +6,7 @@ class CreateSeasonScreen < Formotion::FormController
     setup_navbar
     build_form
     enable_create_button
-    initWithForm(@form)
+    initWithForm(Formtion::Form.new(CreateSeasonForm))
   end
 
   private
@@ -27,7 +27,7 @@ class CreateSeasonScreen < Formotion::FormController
   def create_season
     disable_create_button
     @season = Season.new
-    @season.name = @form.render[:name]
+    @season.name = @form.render[:season_name]
     @season.league = @league
     @season.create do
       if @season.created

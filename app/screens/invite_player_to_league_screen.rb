@@ -1,9 +1,9 @@
 class InvitePlayersToLeagueScreen < ProMotion::TableScreen
-  attr_accessor :league, :table_data, :leagues_screen
+  attr_accessor :league, :table_data, :delegate
 
   def on_load
     setup_navbar
-    update_table_data
+    refresh_table_cells
   end
 
   def tapped(player)
@@ -22,17 +22,21 @@ class InvitePlayersToLeagueScreen < ProMotion::TableScreen
   def setup_navbar
     navigationItem.hidesBackButton = true
     navigationItem.title = "Invite Players"
-    set_nav_bar_right_button "Save", action: :pop_to_leagues_screen, type: UIBarButtonItemStyleDone
+    set_nav_bar_right_button "Save", action: :done_inviting_players, type: UIBarButtonItemStyleDone
   end
 
-  def pop_to_leagues_screen
-    navigationController.pop @leagues_screen
+  def done_inviting_players
+    @delegate.done_with_invitations
+  end
+
+  def refresh_table_cells
+    cells = @league.invitable_players.map{ |player| cell_for(player) }
+    @table_data = [{:cells => cells}]
   end
 
   def update_table_data
     @league.populate_invitable_players do
-      cells = @league.invitable_players.map { |player| cell_for(player) }
-      @table_data = [{:cells => cells}]
+      refresh_table_cells
       super
     end
   end

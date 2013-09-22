@@ -1,4 +1,4 @@
-class LeaguesScreen < ProMotion::SectionedTableScreen
+class LeaguesScreen < ProMotion::TableScreen
   attr_accessor :signedin_player, :table_data, :selected_league
 
   title 'Leagues'
@@ -40,10 +40,16 @@ class LeaguesScreen < ProMotion::SectionedTableScreen
   end
 
   def create_league
-    create_league_screen = CreateLeagueScreen.new
-    create_league_screen.signedin_player = @signedin_player
-    create_league_screen.leagues_screen = self
-    open create_league_screen
+    nav = UINavigationController.alloc.initWithRootViewController(create_league_screen)
+    present_modal nav
+  end
+
+  def create_league_screen
+    @create_league_screen = CreateLeagueScreen.new
+    @create_league_screen.modalTransitionStyle = UIModalTransitionStyleFlipHorizontal
+    @create_league_screen.signedin_player = @signedin_player
+    @create_league_screen.leagues_screen = self
+    @create_league_screen
   end
 
   def open_league_overview
