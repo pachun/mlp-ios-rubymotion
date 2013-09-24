@@ -9,7 +9,7 @@ Teacup::Stylesheet.new(:game_overview_sheet) do
     backgroundColor: :white,
     separatorStyle: UITableViewCellSeparatorStyleNone,
     constraints: [
-      constrain_below(:header),
+      constrain_below(:header).minus(NavBarHeight), # wierd... 64px tall padding on top of table, not occupied by cells...
       constrain(:center_x).equals(:superview, :center_x),
       constrain(:width).equals(:superview, :width),
       constrain(:height).equals(:superview, :height).minus(HeaderHeight),
@@ -40,7 +40,7 @@ Teacup::Stylesheet.new(:game_overview_sheet) do
       constrain_height(HeaderHeight),
       constrain(:left).equals(:superview, :left),
       constrain(:right).equals(:superview, :right),
-      constrain(:top).equals(:superview, :top),
+      constrain(:top).equals(:superview, :top).plus(NavTopHeight),
     ],
     border: { bottom: {
         width: 10,

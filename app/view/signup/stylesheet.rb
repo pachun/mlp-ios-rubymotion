@@ -93,7 +93,7 @@ Teacup::Stylesheet.new(:signup_sheet) do
   style :ten_cup_rack,
     image: '10rack.png',
     constraints: [
-      constrain(:top).equals(:superview, :top).minus(11),
+      constrain(:top).equals(:superview, :top).minus(11).plus(20),
       constrain(:center_x).equals(:superview, :right),
     ]
 

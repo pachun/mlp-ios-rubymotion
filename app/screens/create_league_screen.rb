@@ -23,6 +23,10 @@ class CreateLeagueScreen < PM::FormotionScreen
 
   private
 
+  def go_back_to_leagues_screen
+    dismiss_modal
+  end
+
   def append_season_creation_form
     new_season_form = CreateSeasonForm
     new_season_form[:sections].pop
@@ -79,8 +83,8 @@ class CreateLeagueScreen < PM::FormotionScreen
   end
 
   def invite_players
-    @league.populate_invitable_players do
-      open InvitePlayersToLeagueScreen.new(league: @league, leagues_screen: @leagues_screen, delegate: self)
+    @league.populate_invitable_players(@signedin_player) do
+      open InvitePlayersToLeagueScreen.new(league: @league, signedin_player: @signedin_player, delegate: self)
     end
   end
 

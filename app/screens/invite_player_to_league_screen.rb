@@ -1,5 +1,5 @@
 class InvitePlayersToLeagueScreen < ProMotion::TableScreen
-  attr_accessor :league, :table_data, :delegate
+  attr_accessor :league, :table_data, :delegate, :signedin_player
 
   def on_load
     setup_navbar
@@ -35,7 +35,7 @@ class InvitePlayersToLeagueScreen < ProMotion::TableScreen
   end
 
   def update_table_data
-    @league.populate_invitable_players do
+    @league.populate_invitable_players(@signedin_player) do
       refresh_table_cells
       super
     end
@@ -64,7 +64,7 @@ class InvitePlayersToLeagueScreen < ProMotion::TableScreen
   end
 
   def invite(player)
-    @league.invite(player) do
+    @league.invite(player, from: @signedin_player) do
       if player.invited
         update_table_data
       else

@@ -6,7 +6,7 @@ Teacup::Stylesheet.new(:login_sheet) do
     accessibilityLabel: 'Login Screen'
 
   style :pong_man,
-    image: 'large_pong_man.png',
+    image: 'pong_man.png',
     layer: {
       cornerRadius: 6,
       masksToBounds: true,

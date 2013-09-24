@@ -1,10 +1,6 @@
 class SignupScreen < ProMotion::Screen
   attr_accessor :player
 
-  def on_load
-    self.modalTransitionStyle = UIModalTransitionStyleFlipHorizontal
-  end
-
   def did_load
     @name_field.when(DoneWithKeyboard) { @email_field.becomeFirstResponder }
     @email_field.when(DoneWithKeyboard) { @password_field.becomeFirstResponder }

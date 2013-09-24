@@ -24,7 +24,9 @@ class LoginScreen < ProMotion::Screen
   end
 
   def flip_to_signup_screen
-    open SignupScreen, modal: true
+    signup_screen = SignupScreen.new
+    signup_screen.modalTransitionStyle = UIModalTransitionStyleFlipHorizontal
+    open signup_screen, modal: true
   end
 
   def enable_login_button

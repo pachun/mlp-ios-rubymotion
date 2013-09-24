@@ -4,6 +4,10 @@ TrimColor = 0xd6d6d6.uicolor
 BlueColor = 0x12619a.uicolor
 RedColor = 0xe5603c.uicolor
 NavbarColor = 0x0088cc.uicolor
+NavBarHeight = 44
+StatusBarHeight = 20
+TabBarHeight = 49
+NavTopHeight = StatusBarHeight + NavBarHeight
 
 # style default UI components
 Teacup::Appearance.new do

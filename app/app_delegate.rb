@@ -16,7 +16,7 @@ end
 BaseURL = 'http://localhost'
 class AppDelegate < ProMotion::Delegate
   def on_load(app, options)
-    customize_appearance
+    # customize_appearance
     open LoginScreen
   end
 end

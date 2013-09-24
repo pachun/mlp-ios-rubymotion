@@ -51,7 +51,7 @@ class GamesScreen < UITableViewController
     @league.current_season.teams.map do |team|
       {
         :title => team.name,
-        :key => team.id,
+        :key => team.id.to_s,
         :type => :check,
       }
     end

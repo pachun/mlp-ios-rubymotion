@@ -28,7 +28,7 @@ class GameOverviewScreen < ProMotion::Screen
 
       subview UILabel, :home_team_name, :text => @game.home_team.name
       subview UILabel, :away_team_name, :text => @game.away_team.name
-      subview UILabel, :round_number_label
+      # subview UILabel, :round_number_label
     end
   end
 
@@ -59,6 +59,10 @@ class GameOverviewScreen < ProMotion::Screen
 
   def tableView(table_view, heightForRowAtIndexPath:index_path)
     30
+  end
+
+  def tableView(table_view, heightForHeaderInSection:section)
+    0
   end
 
   private

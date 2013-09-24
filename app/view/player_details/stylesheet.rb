@@ -12,7 +12,7 @@ Teacup::Stylesheet.new(:player_details_sheet) do
       constrain_height(60),
       # constrain(:left).equals(:superview, :left).plus(50),
       constrain(:center_x).equals(:superview, :center_x),
-      constrain(:top).equals(:superview, :top).plus(50),
+      constrain(:top).equals(:superview, :top).plus(50).plus(NavTopHeight),
     ]
 
   style :important_stats_box,

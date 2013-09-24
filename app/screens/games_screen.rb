@@ -36,7 +36,9 @@ class GamesScreen < UITableViewController
 
   def load_create_game_form
     build_create_game_form
-    navigationController << CreateGameScreen.alloc.initWithForm(@create_game_form)
+    create_game_screen = CreateGameScreen.alloc.initWithForm(@create_game_form)
+    nav = UINavigationController.alloc.initWithRootViewController(create_game_screen)
+    present_modal(nav)
   end
 
   def create_game

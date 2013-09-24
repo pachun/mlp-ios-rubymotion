@@ -31,7 +31,7 @@ class LeaguesScreen < ProMotion::TableScreen
   private
 
   def setup_navbar
-    set_nav_bar_left_button(nil, action: :logout, system_icon: UIBarButtonSystemItemReply)
+    navigationItem.leftBarButtonItem = UIBarButtonItem.alloc.initWithImage('back_arrow.png'.uiimage, style:UIBarButtonItemStylePlain, target:self, action: :logout)
     set_nav_bar_right_button(nil, action: :create_league, system_icon: UIBarButtonSystemItemAdd)
   end
 
@@ -96,6 +96,8 @@ class LeaguesScreen < ProMotion::TableScreen
 
   def options_tab
     screen = OptionsScreen.new
+    screen.league = @selected_league
+    screen.signedin_player = @signedin_player
     tab = UITabBarItem.alloc.initWithTitle('Options', image:'options.png'.uiimage, tag:0)
     screen.setTabBarItem(tab)
     UINavigationController.new << screen

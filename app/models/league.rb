@@ -28,16 +28,16 @@ class League
     end
   end
 
-  def populate_invitable_players(&block)
-    BW::HTTP.get(BaseURL + "/league/#{@id}/invitable_players/#{@commissioner.api_key}") do |response|
+  def populate_invitable_players(player, &block)
+    BW::HTTP.get(BaseURL + "/league/#{@id}/invitable_players/#{player.api_key}") do |response|
       invitable_player_hashes = BW::JSON.parse(response.body.to_str)
       @invitable_players = invitable_player_hashes.map { |player_json| InvitedLeaguePlayer.from_hash(player_json) }
       block.call
     end
   end
 
-  def invite(player, &block)
-    BW::HTTP.post(BaseURL + "/league/#{@id}/invite/#{player.id}/#{@commissioner.api_key}") do |response|
+  def invite(player, from: signedin_player, &block)
+    BW::HTTP.post(BaseURL + "/league/#{@id}/invite/#{player.id}/#{signedin_player.api_key}") do |response|
       player.invited = true if response.ok?
       block.call
     end
