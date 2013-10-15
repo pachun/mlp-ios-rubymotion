@@ -5,15 +5,15 @@ class PlayerDetailsScreen < ProMotion::Screen
     subview UIImageView, :gravatar, :image => @player.gravatar
     subview UIView, :important_stats_box do
       subview UILabel, :spp_label
-      subview UILabel, :spp, :text => @player.spp.to_s
+      subview UILabel, :spp, :text => @player.spp.round(2).to_s
       subview UILabel, :shp_label
-      subview UILabel, :shp, :text => @player.shp.to_s
+      subview UILabel, :shp, :text => @player.shp.round(2).to_s
       subview UILabel, :slc_label
       subview UILabel, :slc, :text => @player.slc.to_s
       subview UILabel, :lpp_label
-      subview UILabel, :lpp, :text => @player.lpp.to_s
+      subview UILabel, :lpp, :text => @player.lpp.round(2).to_s
       subview UILabel, :lhp_label
-      subview UILabel, :lhp, :text => @player.lhp.to_s
+      subview UILabel, :lhp, :text => @player.lhp.round(2).to_s
       subview UILabel, :llc_label
       subview UILabel, :llc, :text => @player.llc.to_s
     end

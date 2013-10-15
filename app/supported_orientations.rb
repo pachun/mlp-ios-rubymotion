@@ -14,8 +14,8 @@ class UITabBarController < UIViewController
   end
 end
 
-# class UIViewController < UIResponder
-#   def supportedInterfaceOrientations
-#     UIInterfaceOrientationMaskPortrait
-#   end
-# end
+class UIViewController < UIResponder
+  def supportedInterfaceOrientations
+    UIInterfaceOrientationMaskPortrait
+  end
+end

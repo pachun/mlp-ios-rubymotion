@@ -69,8 +69,10 @@ class Turn
 
   def cup_hit_by(player)
     shot = shot_for(player)
-    if shot.status == 'shot'
+    if shot.status == 'shot' && shot.cup_number != 0
       shot.cup_number.to_s
+    elsif shot.status == 'shot' && shot.cup_number == 0
+      '-'
     else
       "no shot"
     end

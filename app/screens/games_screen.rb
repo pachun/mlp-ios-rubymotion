@@ -1,5 +1,5 @@
 class GamesScreen < UITableViewController
-  attr_accessor :reuse_id, :league, :signedin_player, :create_game_form, :new_game
+  attr_accessor :reuse_id, :league, :signedin_player, :create_game_form, :games_by_date
   stylesheet :game_cell_sheet
 
   def viewDidLoad
@@ -16,45 +16,40 @@ class GamesScreen < UITableViewController
   def setup_navbar
     navigationItem.title = 'Games'
     if @league.commissioner.id == @signedin_player.id
-      navigationItem.rightBarButtonItem = UIBarButtonItem.alloc.initWithBarButtonSystemItem(UIBarButtonSystemItemAdd, target:self, action: :check_if_teams_locked)
+      navigationItem.rightBarButtonItem = UIBarButtonItem.alloc.initWithBarButtonSystemItem(UIBarButtonSystemItemAdd, target:self, action: :go_to_create_game_screen)
     end
   end
 
-  def check_if_teams_locked
-    if !@league.current_season.teams_locked
-      UIAlertView.alert("You have to lock teams before scheduling games. This is irreversible. Continue?", buttons: ['Yes, Lock Teams', 'No']) do |button|
-        if button == 'Yes, Lock Teams'
-          @league.current_season.lock_teams(@signedin_player) do
-            load_create_game_form
-          end
-        end
-      end
-    else
-      load_create_game_form
+  def lock_teams
+    @league.current_season.lock_teams(@signedin_player)
+  end
+
+  def teams_unlocked?
+    !@league.current_season.teams_locked
+  end
+
+  def ask_to_lock_teams
+    UIAlertView.alert("You have to lock teams before scheduling games. This is irreversible. Continue?", buttons: ['Yes, Lock Teams', 'No']) do |button|
+      lock_teams if button == 'Yes, Lock Teams'
     end
   end
 
-  def load_create_game_form
-    build_create_game_form
-    create_game_screen = CreateGameScreen.alloc.initWithForm(@create_game_form)
-    nav = UINavigationController.alloc.initWithRootViewController(create_game_screen)
-    present_modal(nav)
+  def go_to_create_game_screen
+    ask_to_lock_teams if teams_unlocked?
+    create_game unless teams_unlocked?
+  end
+
+  def create_game_screen
+    screen = CreateGameScreen.new
+    screen.modalTransitionStyle = UIModalTransitionStyleFlipHorizontal
+    screen.signedin_player = @signedin_player
+    screen.season = @league.current_season
+    screen
   end
 
   def create_game
-    @new_game = Game.new
-    @new_game.season = @league.current_season
-    @new_game.scheduled_time = @create_game_form.render[:scheduled_time]
-    @new_game.home_team = @league.current_season.team_with_id(@create_game_form.render[:home_team][:home_team])
-    @new_game.away_team = @league.current_season.team_with_id(@create_game_form.render[:away_team][:away_team])
-    @new_game.create(@signedin_player) do
-      if @new_game.created
-        SVProgressHUD.showSuccessWithStatus('Game scheduled!')
-        navigationController.pop
-      else
-        SVProgressHUD.showErrorWithStatus(@new_game.error)
-      end
-    end
+    nav = UINavigationController.alloc.initWithRootViewController(create_game_screen)
+    present_modal nav
   end
 
   def back_to_leagues
@@ -70,21 +65,76 @@ class GamesScreen < UITableViewController
   def refresh_game_list
     @league.current_season.populate_teams(@signedin_player) do
       @league.current_season.populate_games(@signedin_player) do
+        sort_games_by_date
         tableView.reloadData
       end
     end
   end
 
-  def numberOfSectionsIn(table_view)
-    1
+  def sort_games_by_date
+    sort_unique_dates
+    @league.current_season.games.each do |game|
+      @organized_games.each_pair do |date, games|
+        if date.same_day? game.scheduled_time
+          games << game
+          break
+        end
+      end
+    end
+  end
+
+  def sort_unique_dates
+    all_games = @league.current_season.games
+    dates = all_games.map{ |g| g.scheduled_time }
+    dates.sort!.reverse!
+    collapse(dates)
+  end
+
+  def collapse(dates)
+    @organized_games = {}
+    @organized_games[dates.first] = []
+    dates.each do |date|
+      last_date = @organized_games.keys.last
+      @organized_games[date] = [] unless last_date.same_day?(date)
+    end
+  end
+
+  def numberOfSectionsInTableView(table_view)
+    # 1
+    @organized_games.nil? ? 0 : @organized_games.keys.count
   end
 
   def tableView(table_view, numberOfRowsInSection:section)
-    @league.current_season.games.nil? ? 0 : @league.current_season.games.count
+    # @league.current_season.games.nil? ? 0 : @league.current_season.games.count
+    @league.current_season.games.nil? ? 0 : @organized_games[@organized_games.keys[section]].count
+  end
+
+  def tableView(table_view, heightForHeaderInSection: section)
+    30
+  end
+
+  def tableView(table_view, viewForHeaderInSection:section)
+    if @organized_games
+      UIView.alloc.init.tap do |header|
+        header.frame = [[0,0],[320,60]]
+        header.backgroundColor = BackgroundColor
+        header << header_label_in_section(section)
+      end
+    else
+      UIView.new
+    end
+  end
+
+  def header_label_in_section(section)
+    UILabel.alloc.init.tap do |header|
+      header.frame = [[10,5],[300,20]]
+      header.font = :bold.uifont(12)
+      header.text = @organized_games.keys[section].string_with_format('MMMM d, yyyy')
+    end
   end
 
   def tableView(table_view, didSelectRowAtIndexPath:index_path)
-    game = @league.current_season.games[index_path.row]
+    game = game_at_path(index_path)
     if @league.commissioner.id == @signedin_player.id && !game.was_played
       game.setup_with_ref(@signedin_player)
       present_modal game.navigation_stack.nav
@@ -102,18 +152,27 @@ class GamesScreen < UITableViewController
     100
   end
 
+  def game_at_path(path)
+    date = @organized_games.keys[path.section]
+    @organized_games[date][path.row]
+  end
+
   def tableView(table_view, cellForRowAtIndexPath:index_path)
     cell = recycled_cell
     cell = new_cell if cell.nil?
-    game = @league.current_season.games[index_path.row]
-    layout(cell.contentView, :cell) do
-      subview(UIView, :game_card) do
-        subview(UILabel, :home_team_name, :text => game.home_team.name)
-        subview(UILabel, :vs_label)
-        subview(UILabel, :away_team_name, :text => game.away_team.name)
+    unless @organized_games.nil?
+      game = game_at_path(index_path)
+      layout(cell.contentView, :cell) do
+        subview(UIView, :game_card) do
+          game_time = game.scheduled_time.string_with_format('hh:mma')
+          subview(UILabel, :game_time, :text => game_time)
+          subview(UILabel, :home_team_name, :text => game.home_team.name)
+          subview(UILabel, :vs_label)
+          subview(UILabel, :away_team_name, :text => game.away_team.name)
+        end
       end
+      cell.contentView.apply_constraints
     end
-    cell.contentView.apply_constraints
     cell
   end
 

@@ -8,6 +8,8 @@ class Player
     :accepted_invite, :declined_invite, :big_gravatar,
     :home_cups_hit, :away_cups_hit
 
+  attr_accessor :reset_link_sent
+
   def self.from_hash(player)
     new_player = Player.new
     new_player.id = player[:id] if player.has_key?(:id)
@@ -96,6 +98,16 @@ class Player
     end
   end
 
+  def reset_password_through_email(&block)
+    @reset_link_sent = false
+    BW::HTTP.get(BaseURL + "/player/#{@email}/email_password_reset_link") do |response|
+      if response.ok?
+        @reset_link_sent = true
+      end
+      block.call
+    end
+  end
+
   def grab_gravatar(&block)
     md5_email = NSData.MD5HexDigest(@email.downcase.dataUsingEncoding(NSUTF8StringEncoding))
     url = "http://www.gravatar.com/avatar/#{md5_email}?s=60&d=monsterid"
@@ -103,6 +115,8 @@ class Player
       @gravatar = response.body.uiimage
       block.call
     end
+    # @gravatar = 'me.jpeg'.uiimage
+    # block.call
   end
 
   def grab_big_gravatar(&block)
@@ -135,6 +149,15 @@ class Player
     BW::HTTP.put(BaseURL + "/player/#{@id}/decline_team/#{team.id}/#{@api_key}") do |response|
       @declined_invite = true if response.ok?
       block.call
+    end
+  end
+
+  def valid_email?
+    if @email.class == String && ((@email =~ /\A.+@.+\.(com|org|net|ca|us|co\.uk)\z/) == 0) && @email.length >= 6 && @email.length <= 75
+      true
+    else
+      @error = 'Valid emails are 6-75 long'
+      false
     end
   end
 
@@ -174,7 +197,7 @@ class Player
   end
 
   def valid_login_credentials?
-    if valid_email && valid_password
+    if valid_email? && valid_password?
       true
     else
       false
@@ -182,14 +205,14 @@ class Player
   end
 
   def valid_signup_credentials?
-    if valid_name && valid_email && valid_password && password_confirmed
+    if valid_name? && valid_email? && valid_password? && password_confirmed?
       true
     else
       false
     end
   end
 
-  def valid_name
+  def valid_name?
     if @name.class == String && @name.length >= 5 && @name.length <= 50
       true
     else
@@ -198,16 +221,7 @@ class Player
     end
   end
 
-  def valid_email
-    if @email.class == String && ((@email =~ /\A.+@.+\.(com|org|net|ca|us|co\.uk)\z/) == 0) && @email.length >= 6 && @email.length <= 75
-      true
-    else
-      @error = 'Valid emails are 6-75 long'
-      false
-    end
-  end
-
-  def valid_password
+  def valid_password?
     if @password.class == String && @password.length >= 4
       true
     else
@@ -216,7 +230,7 @@ class Player
     end
   end
 
-  def password_confirmed
+  def password_confirmed?
     if @password == @confirmed_password
       true
     else

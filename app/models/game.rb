@@ -36,16 +36,23 @@ class Game
 
   def report!
     @winning_team_id = @home_team_hits > @away_team_hits ? @home_team.id : @away_team.id
-    report_score
-    @navigation_stack.end_game
+    report_score do
+      @navigation_stack.end_game
+    end
+  end
+
+  def self.date_from_string(date_string)
+    date_formatter = NSDateFormatter.alloc.init
+    date_formatter.dateFormat = "yyyy-MM-dd'T'HH:mm:ss'-04:00'"
+    date_formatter.dateFromString(date_string)
   end
 
   def self.from_hash(game_hash, with_season: season)
     game = Game.new
     game.id = game_hash[:id]
     game.season = season
-    game.scheduled_at = game_hash[:scheduled_at]
-    game.scheduled_time = game_hash[:scheduled_time]
+    game.scheduled_at = date_from_string(game_hash[:scheduled_at])
+    game.scheduled_time = date_from_string(game_hash[:scheduled_time])
     game.was_played = game_hash[:was_played]
     game.winning_team_id = game_hash[:winning_team_id]
     game.home_team = season.team_with_id(game_hash[:home_team_id])
@@ -132,7 +139,7 @@ class Game
   end
 
   def over?
-    @home_team_hits == 5 || @away_team_hits == 5
+    @home_team_hits == 10 || @away_team_hits == 10
   end
 
   def populate_details(signedin_player, &block)
@@ -223,7 +230,7 @@ class Game
 
   def save(commissioner, &block)
     data = {:game => {:season_id => @season.id,
-                      :scheduled_time => Time.at(@scheduled_time),
+                      :scheduled_time => @scheduled_time,
                       :home_team_id => @home_team.id,
                       :away_team_id => @away_team.id,
     }}

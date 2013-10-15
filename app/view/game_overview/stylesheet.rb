@@ -6,13 +6,14 @@ Teacup::Stylesheet.new(:game_overview_sheet) do
     backgroundColor: :white
 
   style :rounds_table,
-    backgroundColor: :white,
+    backgroundColor: :green.uicolor,#:white,
     separatorStyle: UITableViewCellSeparatorStyleNone,
     constraints: [
-      constrain_below(:header).minus(NavBarHeight), # wierd... 64px tall padding on top of table, not occupied by cells...
+      # constrain(:top).equals(:superview, :top).plus(NavBarHeight).plus(HeaderHeight),
+      constrain_below(:header),#.minus(NavBarHeight), # wierd... 64px tall padding on top of table, not occupied by cells...
       constrain(:center_x).equals(:superview, :center_x),
       constrain(:width).equals(:superview, :width),
-      constrain(:height).equals(:superview, :height).minus(HeaderHeight),
+      constrain(:height).equals(:superview, :height).minus(HeaderHeight).minus(NavBarHeight),
     ]
 
   style :round_number,
@@ -36,11 +37,12 @@ Teacup::Stylesheet.new(:game_overview_sheet) do
 
 
   style :header,
+    backgroundColor: :blue.uicolor,
     constraints: [
       constrain_height(HeaderHeight),
       constrain(:left).equals(:superview, :left),
       constrain(:right).equals(:superview, :right),
-      constrain(:top).equals(:superview, :top).plus(NavTopHeight),
+      constrain(:top).equals(:superview, :top).plus(NavBarHeight),
     ],
     border: { bottom: {
         width: 10,

@@ -2,9 +2,10 @@ Teacup::Stylesheet.new(:turn_screen_sheet) do
   style :root,
     backgroundColor: :white.uicolor
 
+  IOS7_adjustment = 50
   style :one_of_three,
     constraints: [
-      constrain(:top).equals(:superview, :top),
+      constrain(:top).equals(:superview, :top).plus(IOS7_adjustment),
       constrain(:left).equals(:superview, :left),
       constrain(:height).equals(:superview, :height),
       constrain(:width).equals(:superview, :width).times(0.33),
@@ -12,7 +13,7 @@ Teacup::Stylesheet.new(:turn_screen_sheet) do
 
   style :two_of_three,
     constraints: [
-      constrain(:top).equals(:superview, :top),
+      constrain(:top).equals(:superview, :top).plus(IOS7_adjustment),
       constrain(:left).equals(:one_of_three, :right),
       constrain(:height).equals(:superview, :height),
       constrain(:width).equals(:superview, :width).times(0.34),
@@ -20,7 +21,7 @@ Teacup::Stylesheet.new(:turn_screen_sheet) do
 
   style :three_of_three,
     constraints: [
-      constrain(:top).equals(:superview, :top),
+      constrain(:top).equals(:superview, :top).plus(IOS7_adjustment),
       constrain(:left).equals(:two_of_three, :right),
       constrain(:height).equals(:superview, :height),
       constrain(:width).equals(:superview, :width).times(0.33),
@@ -28,7 +29,7 @@ Teacup::Stylesheet.new(:turn_screen_sheet) do
 
   style :one_of_two,
     constraints: [
-      constrain(:top).equals(:superview, :top),
+      constrain(:top).equals(:superview, :top).plus(IOS7_adjustment),
       constrain(:left).equals(:superview, :left),
       constrain(:height).equals(:superview, :height),
       constrain(:width).equals(:superview, :width).times(0.5),
@@ -36,7 +37,7 @@ Teacup::Stylesheet.new(:turn_screen_sheet) do
 
   style :two_of_two,
     constraints: [
-      constrain(:top).equals(:superview, :top),
+      constrain(:top).equals(:superview, :top).plus(IOS7_adjustment),
       constrain(:right).equals(:superview, :right),
       constrain(:height).equals(:superview, :height),
       constrain(:width).equals(:superview, :width).times(0.5),

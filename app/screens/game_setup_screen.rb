@@ -9,7 +9,7 @@ class GameSetupScreen < ProMotion::Screen
   def viewDidLoad
     super
     navigationItem.title = "Setup"
-    navigationItem.rightBarButtonItem = UIBarButtonItem.alloc.initWithBarButtonSystemItem(UIBarButtonSystemItemTrash, target:self, action: :confirm_quit)
+    navigationItem.leftBarButtonItem = UIBarButtonItem.alloc.initWithBarButtonSystemItem(UIBarButtonSystemItemTrash, target:self, action: :confirm_quit)
     allow_player_substitutions
   end
 

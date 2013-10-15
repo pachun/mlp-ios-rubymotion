@@ -61,20 +61,20 @@ Teacup::Stylesheet.new(:login_sheet) do
       constrain(:bottom).equals(:superview, :bottom).minus(KeyboardHeight + 30),
     ]
 
+  style :forgot_password_button, extends: :blue_button,
+    font: :bold.uifont(14),
+    constraints: [
+      constrain_width(ControlWidth),
+      constrain_height(ButtonHeight/2),
+      constrain(:center_x).equals(:superview, :center_x),
+      constrain_above(:signup_button, 10),
+    ]
+
   style :signup_button, extends: :blue_button,
     constraints: [
       constrain_width(ControlWidth),
       constrain_height(ButtonHeight),
       constrain(:center_x).equals(:superview, :center_x),
       constrain(:bottom).equals(:superview, :bottom).minus(20),
-    ]
-
-  style :or_label,
-    text: 'Or you can',
-    background: :clear.uicolor,
-    font: 'Satisfy'.uifont(30),
-    constraints: [
-      constrain(:center_x).equals(:superview, :center_x),
-      constrain_above(:signup_button, 10),
     ]
 end

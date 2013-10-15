@@ -10,7 +10,7 @@ Teacup::Stylesheet.new(:team_invitation_sheet) do
     textAlignment: :center.uialignment,
     constraints: [
       constrain_width(200),
-      constrain(:top).equals(:superview, :top).plus(35),
+      constrain(:top).equals(:superview, :top).plus(35).plus(NavTopHeight),
       constrain(:center_x).equals(:superview, :center_x),
     ]
 

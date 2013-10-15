@@ -4,7 +4,7 @@ class GameOverviewScreen < ProMotion::Screen
   title 'Game Report'
   stylesheet :game_overview_sheet
   layout :root do
-    @rounds_table = subview UITableView, :rounds_table, :dataSource => self, :delegate => self
+    @rounds_table = subview UITableView, :rounds_table, :dataSource => self, :delegate => self, :hiddent => true
     subview UIView, :header do
       subview UIImageView, :home_team_p1_icon, :image => @game.home_team_players[0].gravatar
       subview UILabel, :"home_team_p1_name", :text => @game.home_team_players[0].name.split(' ').join("\n")
@@ -37,7 +37,7 @@ class GameOverviewScreen < ProMotion::Screen
     navigationItem.leftBarButtonItem = UIBarButtonItem.alloc.initWithImage('back_arrow.png'.uiimage, style:UIBarButtonItemStylePlain, target:self, action: :go_to_games_list)
   end
 
-  def numberOfSectionsIn(table_view)
+  def numberOfSectionsInTableView(table_view)
     1
   end
 

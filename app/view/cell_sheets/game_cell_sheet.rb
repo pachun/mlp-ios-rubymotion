@@ -1,7 +1,7 @@
 Teacup::Stylesheet.new(:game_cell_sheet) do
   import :mlp
 
-  style :root,
+  style :cell,
     background: BackgroundColor
 
   style :game_card, extends: :field_box,
@@ -10,6 +10,19 @@ Teacup::Stylesheet.new(:game_cell_sheet) do
       constrain(:height).equals(:superview, :height).times(0.8),
       constrain(:center_x).equals(:superview, :center_x),
       constrain(:center_y).equals(:superview, :center_y),
+    ]
+
+  style :game_time,
+    font: :bold.uifont(12),
+    backgroundColor: :clear.uicolor,
+    textColor: BlueColor,
+    constraints: [
+      # constrain(:left).equals(:superview, :left).plus(5),
+      # constrain(:top).equals(:superview, :top).plus(5),
+      constrain(:right).equals(:superview, :right).minus(5),
+      constrain(:center_y).equals(:superview, :center_y),
+      constrain_width(60),
+      constrain_height(10),
     ]
 
   style :team_name,

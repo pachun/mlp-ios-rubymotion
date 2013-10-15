@@ -7,7 +7,7 @@ Teacup::Stylesheet.new(:game_setup_sheet) do
   style :home_team_bg,
     constraints: [
       constrain(:left).equals(:superview, :left),
-      constrain(:center_y).equals(:superview, :center_y),
+      constrain(:center_y).equals(:superview, :center_y).plus(30),
       constrain(:height).equals(:superview, :height),
       constrain(:width).equals(:superview, :width).times(0.5),
     ]
@@ -15,7 +15,7 @@ Teacup::Stylesheet.new(:game_setup_sheet) do
   style :away_team_bg,
     constraints: [
       constrain(:right).equals(:superview, :right),
-      constrain(:center_y).equals(:superview, :center_y),
+      constrain(:center_y).equals(:superview, :center_y).plus(30),
       constrain(:width).equals(:superview, :width).times(0.5),
       constrain(:height).equals(:superview, :height),
     ]
@@ -78,6 +78,6 @@ Teacup::Stylesheet.new(:game_setup_sheet) do
       constrain_width(ControlWidth),
       constrain_height(ButtonHeight),
       constrain(:center_x).equals(:superview, :center_x),
-      constrain(:bottom).equals(:superview, :bottom).minus(10),
+      constrain(:bottom).equals(:superview, :bottom).minus(35),
     ]
 end

@@ -14,7 +14,7 @@ Teacup::Stylesheet.new(:league_player_invite_sheet) do
       constrain_width(200),
       constrain_height(60),
       constrain(:center_x).equals(:superview, :center_x),
-      constrain(:top).equals(:superview, :top).plus(20),
+      constrain(:top).equals(:superview, :top).plus(20).plus(NavTopHeight),
     ]
 
   style :league_name,

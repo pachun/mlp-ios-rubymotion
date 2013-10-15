@@ -2,11 +2,10 @@ class LoginScreen < ProMotion::Screen
   attr_accessor :player
 
   def did_load
-    @email_field.text = 'hello@nickpachulski.com'
-    @password_field.text = 'password'
     @email_field.when(DoneWithKeyboard) { @password_field.becomeFirstResponder }
     @password_field.when(DoneWithKeyboard) { drop_keyboard }
     @signup_button.when_tapped { flip_to_signup_screen }
+    @forgot_password_button.when_tapped { send_password_recovery_email }
     view.when_tapped { drop_keyboard }
     enable_login_button
   end
@@ -17,6 +16,34 @@ class LoginScreen < ProMotion::Screen
   end
 
   private
+
+  def send_password_recovery_email
+    @player = Player.new
+    @player.email = @email_field.text
+    if @player.valid_email?
+      confirm_recovery
+    else
+      SVProgressHUD.showErrorWithStatus 'Enter a valid email'
+    end
+  end
+
+  def recover_password
+    SVProgressHUD.showWithMaskType(SVProgressHUDMaskTypeGradient)
+    player.reset_password_through_email do
+      SVProgressHUD.dismiss
+      if player.reset_link_sent
+        SVProgressHUD.showSuccessWithStatus 'Recovery Email Sent'
+      else
+        SVProgressHUD.showErrorWithStatus 'Email Not Found'
+      end
+    end
+  end
+
+  def confirm_recovery
+    UIAlertView.alert("Send recovery email to #{@player.email}?", buttons:['Yes', 'No']) do |button|
+      recover_password if button == 'Yes'
+    end
+  end
 
   def drop_keyboard
     @email_field.resignFirstResponder

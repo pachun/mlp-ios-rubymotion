@@ -24,7 +24,9 @@ class PlayersScreen < UITableViewController
   end
 
   def refresh_player_list
+    SVProgressHUD.showWithStatus('', maskType:SVProgressHUDMaskTypeGradient)
     @league.get_players(@signedin_player) do
+      SVProgressHUD.dismiss
       tableView.reloadData
     end
   end
@@ -57,8 +59,8 @@ class PlayersScreen < UITableViewController
         subview(UIImageView, :player_image, :image => player.gravatar)
         subview(UILabel, :player_name, :text => player.name)
         subview(UILabel, :player_team, :text => 'Free Agent') # fix after teams invites setup
-        subview(UILabel, :player_hit_percentage, :text => "#{player.shp} hit percentage")
-        subview(UILabel, :player_point_percentage, :text => "#{player.spp} point percentage")
+        subview(UILabel, :player_hit_percentage, :text => "#{player.shp.round(2)} hit percentage")
+        subview(UILabel, :player_point_percentage, :text => "#{player.spp.round(2)} point percentage")
       end
     end
     cell.contentView.apply_constraints
