@@ -92,20 +92,20 @@ class GamesScreen < UITableViewController
 
   def collapse(dates)
     @organized_games = {}
-    @organized_games[dates.first] = []
-    dates.each do |date|
-      last_date = @organized_games.keys.last
-      @organized_games[date] = [] unless last_date.same_day?(date)
+    unless dates.empty?
+      @organized_games[dates.first] = []
+      dates.each do |date|
+        last_date = @organized_games.keys.last
+        @organized_games[date] = [] unless last_date.same_day?(date)
+      end
     end
   end
 
   def numberOfSectionsInTableView(table_view)
-    # 1
     @organized_games.nil? ? 0 : @organized_games.keys.count
   end
 
   def tableView(table_view, numberOfRowsInSection:section)
-    # @league.current_season.games.nil? ? 0 : @league.current_season.games.count
     @league.current_season.games.nil? ? 0 : @organized_games[@organized_games.keys[section]].count
   end
 

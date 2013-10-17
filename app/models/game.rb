@@ -43,7 +43,7 @@ class Game
 
   def self.date_from_string(date_string)
     date_formatter = NSDateFormatter.alloc.init
-    date_formatter.dateFormat = "yyyy-MM-dd'T'HH:mm:ss'-04:00'"
+    date_formatter.dateFormat = "yyyy-MM-dd'T'HH:mm:ssZZZZZ"
     date_formatter.dateFromString(date_string)
   end
 
@@ -110,7 +110,6 @@ class Game
   end
 
   def undo_last_shot
-    puts "getting last shot of turn #{@current_turn}"
     last_shot = @current_turn.shots.pop
     unless last_shot.cup_number == 0
       if @current_turn.team.id == @home_team.id
