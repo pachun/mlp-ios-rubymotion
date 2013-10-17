@@ -38,7 +38,7 @@ class TurnScreen < PM::Screen
 
   def viewWillAppear(animated)
     super(animated)
-    @turn.round.game.current_turn = @turn
+    @turn.round.game.current_turn = @turn unless navigationController.nil?
     if @turn.shots.count == @num_shots
       set_nav_bar_button :right, title: 'Done', action: :'done_editing', type: UIBarButtonItemStyleDone
     end

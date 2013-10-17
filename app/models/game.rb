@@ -110,6 +110,7 @@ class Game
   end
 
   def undo_last_shot
+    puts "getting last shot of turn #{@current_turn}"
     last_shot = @current_turn.shots.pop
     unless last_shot.cup_number == 0
       if @current_turn.team.id == @home_team.id

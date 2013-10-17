@@ -90,6 +90,7 @@ class GameNavigationStack
   end
 
   def undo_tapped
+    puts "undo tapped!"
     @game.undo_last_shot
     undo_ui_changes
   end
