@@ -12,8 +12,8 @@ class App
   end
 end
 
-# BaseURL = 'http://mlp-sinatra.herokuapp.com'
-BaseURL = 'http://localhost'
+BaseURL = 'http://mlp-sinatra.herokuapp.com'
+# BaseURL = 'http://localhost'
 class AppDelegate < ProMotion::Delegate
   def on_load(app, options)
     # customize_appearance
