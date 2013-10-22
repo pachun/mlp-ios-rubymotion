@@ -4,7 +4,7 @@ class GameOverviewScreen < ProMotion::Screen
   title 'Game Report'
   stylesheet :game_overview_sheet
   layout :root do
-    @rounds_table = subview UITableView, :rounds_table, :dataSource => self, :delegate => self, :hiddent => true
+    @rounds_table = subview UITableView, :rounds_table, :dataSource => self, :delegate => self, :hidden => true
     subview UIView, :header do
       subview UIImageView, :home_team_p1_icon, :image => @game.home_team_players[0].gravatar
       subview UILabel, :"home_team_p1_name", :text => @game.home_team_players[0].name.split(' ').join("\n")

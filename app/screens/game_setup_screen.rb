@@ -65,6 +65,6 @@ class GameSetupScreen < ProMotion::Screen
     @subing_team = team
     @subing_player = player_position
     ommitted_ids = game.home_team_players.map { |p| p.id } + game.away_team_players.map { |p| p.id }
-    open SubstitutePlayerScreen.new(league: @game.season.league, scorer: @game.ref, ommitted_player_ids: ommitted_ids)
+    open SubstitutePlayerScreen.new(league: @game.season.league, scorer: @game.ref, ommitted_player_ids: ommitted_ids, table_data: [])
   end
 end

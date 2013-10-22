@@ -9,7 +9,7 @@ class SubstitutePlayerScreen < ProMotion::TableScreen
 
   def update_table_data
     if @league.players.nil?
-      @league.get_players do
+      @league.get_players(@scorer) do
         fill_cells
         super
       end
@@ -20,8 +20,8 @@ class SubstitutePlayerScreen < ProMotion::TableScreen
   end
 
   def fill_cells
-    players = @league.players.select { |p| !ommitted_player_ids.include?(p.id) }
-    cells = players.map { |player| cell_for(player) }
+    players = @league.players.select{ |p| !ommitted_player_ids.include?(p.id) }
+    cells = players.map{ |player| cell_for(player) }
     @table_data = [{:cells => cells}]
   end
 
