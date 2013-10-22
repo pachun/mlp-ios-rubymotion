@@ -274,7 +274,7 @@ class CreateGameScreen < UIViewController
     @new_game.season = @season
     hours = @hours
     hours += 12 if @am_pm == 'pm'
-    @new_game.scheduled_time = @date + hours.hours + @minutes.minutes
+    @new_game.scheduled_time = @date + hours.hours + 4.hours + @minutes.minutes
     @new_game.home_team = @season.team_with_id(@home_team_id)
     @new_game.away_team = @season.team_with_id(@away_team_id)
     @new_game.create(@signedin_player) do
