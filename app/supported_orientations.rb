@@ -8,6 +8,18 @@ class UINavigationController < UIViewController
   end
 end
 
+class GameSetupScreen < ProMotion::Screen
+  def supportedInterfaceOrientations
+    UIInterfaceOrientationMaskLandscape
+  end
+end
+
+class GameOverviewScreen < ProMotion::Screen
+  def supportedInterfaceOrientations
+    UIInterfaceOrientationMaskLandscape
+  end
+end
+
 class UITabBarController < UIViewController
   def supportedInterfaceOrientations
     UIInterfaceOrientationMaskPortrait
